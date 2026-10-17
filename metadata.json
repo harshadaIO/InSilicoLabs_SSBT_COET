@@ -1,0 +1,6 @@
+{
+  "name": "VitaTwin - AI-Powered Patient Digital Twin & Predictive Simulation Engine",
+  "description": "Clinical digital twin platform fusing Synthea EHR baselines and real-time wearable streams with predictive simulation for proactive metabolic and cardiovascular care.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
