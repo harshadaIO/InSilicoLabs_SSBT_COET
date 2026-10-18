@@ -6,6 +6,8 @@ import { EhrDetailModal } from '../components/EhrDetailModal';
 import { TreatmentAdjustModal } from '../components/TreatmentAdjustModal';
 import { EarlyWarningTicker } from '../components/EarlyWarningTicker';
 import { DigitalTwinVisual } from '../components/DigitalTwinVisual';
+import { ClinicalTitrationSimulator } from '../components/ClinicalTitrationSimulator';
+import { TwinInspectorView } from '../components/TwinInspectorView';
 import {
   Users,
   Search,
@@ -28,7 +30,7 @@ import {
   ShieldAlert
 } from 'lucide-react';
 
-export type ClinicianSubView = 'triage' | 'inspector' | 'alerts' | 'protocol';
+export type ClinicianSubView = 'triage' | 'inspector' | 'titration' | 'alerts' | 'protocol';
 
 interface DoctorDashboardProps {
   activeSubView?: ClinicianSubView;
@@ -272,34 +274,34 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
         {/* 1. COHORT TRIAGE SUB-VIEW */}
         {currentSubView === 'triage' && (
           <div className="space-y-6">
-            {/* Key Metrics Ribbon */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="p-4 bg-white/90 border border-[#8da9c4]/30 rounded-2xl shadow-2xs">
-                <div className="text-[11px] font-bold uppercase text-[#134074]">Active Cohort</div>
+            {/* Key Metrics Ribbon (Adaptive 1 -> 2 -> 4 Grid) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              <div className="p-4 sm:p-5 bg-white/90 border border-[#8da9c4]/30 rounded-2xl shadow-2xs">
+                <div className="text-[11px] font-bold uppercase tracking-wider text-[#134074]">Active Cohort</div>
                 <div className="text-2xl font-bold font-mono text-[#0b2545] mt-1">
                   {cohort.length} <span className="text-xs font-normal text-slate-500">Digital Twins</span>
                 </div>
                 <div className="text-[10px] text-[#13315c] font-semibold mt-1">Synthea Synthetic Profiles</div>
               </div>
 
-              <div className="p-4 bg-white/90 border border-[#8da9c4]/30 rounded-2xl shadow-2xs">
-                <div className="text-[11px] font-bold uppercase text-[#134074]">High Risk Stratified</div>
+              <div className="p-4 sm:p-5 bg-white/90 border border-[#8da9c4]/30 rounded-2xl shadow-2xs">
+                <div className="text-[11px] font-bold uppercase tracking-wider text-[#134074]">High Risk Stratified</div>
                 <div className="text-2xl font-bold font-mono text-rose-600 mt-1">
                   {highRiskCount} <span className="text-xs font-normal text-slate-500">Patients</span>
                 </div>
                 <div className="text-[10px] text-rose-700 font-semibold mt-1">Priority Attention</div>
               </div>
 
-              <div className="p-4 bg-white/90 border border-[#8da9c4]/30 rounded-2xl shadow-2xs">
-                <div className="text-[11px] font-bold uppercase text-[#134074]">Active Anomaly Alerts</div>
+              <div className="p-4 sm:p-5 bg-white/90 border border-[#8da9c4]/30 rounded-2xl shadow-2xs">
+                <div className="text-[11px] font-bold uppercase tracking-wider text-[#134074]">Active Anomaly Alerts</div>
                 <div className="text-2xl font-bold font-mono text-amber-600 mt-1">
                   {activeAlertsCount} <span className="text-xs font-normal text-slate-500">Alerts</span>
                 </div>
                 <div className="text-[10px] text-amber-700 font-semibold mt-1">Pending Acknowledgement</div>
               </div>
 
-              <div className="p-4 bg-white/90 border border-[#8da9c4]/30 rounded-2xl shadow-2xs">
-                <div className="text-[11px] font-bold uppercase text-[#134074]">Mean Glycemic TIR</div>
+              <div className="p-4 sm:p-5 bg-white/90 border border-[#8da9c4]/30 rounded-2xl shadow-2xs">
+                <div className="text-[11px] font-bold uppercase tracking-wider text-[#134074]">Mean Glycemic TIR</div>
                 <div className="text-2xl font-bold font-mono text-[#0b2545] mt-1">
                   78.4 <span className="text-xs font-normal text-slate-500">%</span>
                 </div>
@@ -315,10 +317,10 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
             />
 
             {/* Searchable and Filterable Cohort Table */}
-            <div className="bg-white/85 backdrop-blur-md border border-[#8da9c4]/30 rounded-2xl shadow-md overflow-hidden space-y-4 p-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="bg-white/85 backdrop-blur-md border border-[#8da9c4]/30 rounded-2xl shadow-md overflow-hidden space-y-4 p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
                 <div>
-                  <h3 className="text-lg font-bold text-[#0b2545]">
+                  <h3 className="text-base sm:text-lg font-bold text-[#0b2545]">
                     Patient Cohort Surveillance
                   </h3>
                   <p className="text-xs text-slate-600 mt-0.5">
@@ -328,22 +330,22 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
 
                 {/* Search bar */}
                 <div className="relative w-full sm:w-72">
-                  <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-2.5" />
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                   <input
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="Search by name, ID, or condition..."
-                    className="w-full text-xs pl-9 pr-3.5 py-2 border border-slate-300 rounded-xl bg-white focus:ring-2 focus:ring-[#134074] focus:outline-hidden text-[#0b2545]"
+                    className="w-full text-xs pl-9 pr-3.5 py-2.5 min-h-[40px] border border-slate-300 rounded-xl bg-white focus:ring-2 focus:ring-[#134074] focus:outline-hidden text-[#0b2545]"
                   />
                 </div>
               </div>
 
               {/* Risk Filter Segmented Controls */}
-              <div className="flex items-center gap-1.5 p-1 bg-[#eef4ed] border border-[#8da9c4]/30 rounded-xl w-fit">
+              <div className="flex flex-wrap items-center gap-1.5 p-1 bg-[#eef4ed] border border-[#8da9c4]/30 rounded-xl w-full sm:w-fit">
                 <button
                   onClick={() => setRiskFilter('all')}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap ${
+                  className={`flex-1 sm:flex-initial min-h-[38px] px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap flex items-center justify-center ${
                     riskFilter === 'all' ? 'bg-[#134074] text-white shadow-xs' : 'text-[#0b2545] hover:bg-white/60'
                   }`}
                 >
@@ -351,7 +353,7 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
                 </button>
                 <button
                   onClick={() => setRiskFilter('high')}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap ${
+                  className={`flex-1 sm:flex-initial min-h-[38px] px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap flex items-center justify-center ${
                     riskFilter === 'high' ? 'bg-rose-600 text-white shadow-xs' : 'text-slate-700 hover:bg-white/60'
                   }`}
                 >
@@ -359,7 +361,7 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
                 </button>
                 <button
                   onClick={() => setRiskFilter('medium')}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap ${
+                  className={`flex-1 sm:flex-initial min-h-[38px] px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap flex items-center justify-center ${
                     riskFilter === 'medium' ? 'bg-amber-600 text-white shadow-xs' : 'text-slate-700 hover:bg-white/60'
                   }`}
                 >
@@ -367,7 +369,7 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
                 </button>
                 <button
                   onClick={() => setRiskFilter('low')}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap ${
+                  className={`flex-1 sm:flex-initial min-h-[38px] px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap flex items-center justify-center ${
                     riskFilter === 'low' ? 'bg-[#13315c] text-white shadow-xs' : 'text-slate-700 hover:bg-white/60'
                   }`}
                 >
@@ -430,22 +432,22 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
                         </td>
 
                         <td className="py-3.5 px-4 text-right">
-                          <div className="flex items-center justify-end gap-2">
+                          <div className="flex items-center justify-end gap-1.5 sm:gap-2">
                             <button
                               onClick={() => handleInspectPatient(patient)}
-                              className="px-3 py-1.5 text-xs font-bold text-white bg-[#134074] hover:bg-[#0b2545] rounded-lg transition-colors whitespace-nowrap shadow-2xs"
+                              className="min-h-[36px] px-3 py-1.5 text-xs font-bold text-white bg-[#134074] hover:bg-[#0b2545] rounded-lg transition-colors whitespace-nowrap shadow-2xs flex items-center justify-center"
                             >
                               Inspect Twin
                             </button>
                             <button
                               onClick={() => handleAdjustPatientProtocol(patient)}
-                              className="px-3 py-1.5 text-xs font-bold text-[#0b2545] bg-[#eef4ed] hover:bg-white border border-[#8da9c4]/40 rounded-lg transition-colors whitespace-nowrap shadow-2xs"
+                              className="min-h-[36px] px-3 py-1.5 text-xs font-bold text-[#0b2545] bg-[#eef4ed] hover:bg-white border border-[#8da9c4]/40 rounded-lg transition-colors whitespace-nowrap shadow-2xs flex items-center justify-center"
                             >
                               Adjust Rx
                             </button>
                             <button
                               onClick={() => setSelectedPatientForEhr(patient)}
-                              className="px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:text-[#0b2545] transition-colors whitespace-nowrap"
+                              className="min-h-[36px] px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:text-[#0b2545] transition-colors whitespace-nowrap flex items-center justify-center"
                             >
                               EHR
                             </button>
@@ -461,83 +463,36 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
         )}
 
         {/* 2. TWIN INSPECTOR SUB-VIEW */}
-        {currentSubView === 'inspector' && (
-          <div className="space-y-6">
-            {/* Patient Selector Bar */}
-            <div className="bg-white/85 backdrop-blur-md border border-[#8da9c4]/30 rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-[#134074]">Digital Twin Inspector</span>
-                <h3 className="text-lg font-bold text-[#0b2545]">Inspecting Patient Physiological Systems</h3>
-              </div>
-              <div className="flex items-center gap-2">
-                <label className="text-xs font-semibold text-slate-600 whitespace-nowrap">Select Patient:</label>
-                <select
-                  value={activePatientId}
-                  onChange={(e) => handleChoosePatient(e.target.value)}
-                  className="px-3 py-2 bg-white border border-[#8da9c4]/50 rounded-xl text-xs font-bold text-[#0b2545] focus:outline-hidden focus:ring-2 focus:ring-[#134074]"
-                >
-                  {cohort.map(p => (
-                    <option key={p.id} value={p.id}>
-                      {p.full_name} ({p.synthea_id} - {p.risk_level.toUpperCase()} RISK)
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            {/* Inspected Patient Profile Header Strip */}
-            {inspectedPatient && (
-              <div className="bg-[#0b2545] border border-[#13315c] rounded-2xl p-6 text-white shadow-md">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-[#8da9c4] uppercase font-mono">{inspectedPatient.synthea_id}</span>
-                      <span>·</span>
-                      <span className="text-xs text-slate-300">{inspectedPatient.age}y {inspectedPatient.gender}</span>
-                      <span>·</span>
-                      <RiskBadge level={inspectedPatient.risk_level} />
-                    </div>
-                    <h2 className="text-2xl font-bold text-white">{inspectedPatient.full_name}</h2>
-                    <p className="text-xs text-slate-300">{inspectedPatient.primary_condition}</p>
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-[#13315c] border border-[#134074] rounded-xl text-center">
-                      <div className="text-[10px] text-[#8da9c4] uppercase font-bold">HbA1c</div>
-                      <div className="text-xl font-bold font-mono text-white mt-0.5">{inspectedPatient.baselineLabs?.hba1c}%</div>
-                    </div>
-                    <div className="p-3 bg-[#13315c] border border-[#134074] rounded-xl text-center">
-                      <div className="text-[10px] text-[#8da9c4] uppercase font-bold">Fasting Glucose</div>
-                      <div className="text-xl font-bold font-mono text-white mt-0.5">{inspectedPatient.baselineLabs?.fastingGlucose} mg/dL</div>
-                    </div>
-                    <div className="p-3 bg-[#13315c] border border-[#134074] rounded-xl text-center">
-                      <div className="text-[10px] text-[#8da9c4] uppercase font-bold">eGFR</div>
-                      <div className="text-xl font-bold font-mono text-white mt-0.5">{inspectedPatient.baselineLabs?.egfr}</div>
-                    </div>
-                    <button
-                      onClick={() => handleAdjustPatientProtocol(inspectedPatient)}
-                      className="px-4 py-2 text-xs font-bold text-white bg-[#134074] hover:bg-[#13315c] border border-[#8da9c4]/30 rounded-xl transition-all shadow-sm flex items-center gap-1.5"
-                    >
-                      <Stethoscope className="w-3.5 h-3.5 text-[#8da9c4]" />
-                      <span>Adjust Rx Protocol</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Diagnostic System Grid for Inspected Patient */}
-            {inspectedPatient && (
-              <DigitalTwinVisual
-                profile={inspectedPatient}
-                latestGlucose={inspectedPatient.currentGlucose || 135}
-                latestHeartRate={inspectedPatient.currentHeartRate || 72}
-              />
-            )}
-          </div>
+        {currentSubView === 'inspector' && inspectedPatient && (
+          <TwinInspectorView
+            patient={inspectedPatient}
+            cohort={cohort}
+            onSelectPatient={handleChoosePatient}
+            onAdjustProtocol={handleAdjustPatientProtocol}
+            onRunClinicalSimulation={(patientId) => {
+              handleChoosePatient(patientId);
+              handleSelectSubView('titration');
+            }}
+          />
         )}
 
-        {/* 3. AI EARLY WARNINGS SUB-VIEW */}
+        {/* 3. CLINICAL TITRATION & PHARMACOTHERAPY SIMULATOR SUB-VIEW */}
+        {currentSubView === 'titration' && (
+          <ClinicalTitrationSimulator
+            cohort={cohort}
+            selectedPatientId={activePatientId}
+            onSelectPatient={handleChoosePatient}
+            onApplyToProtocol={(directive, targetHbA1c) => {
+              setTreatmentDirective(directive);
+              setTargetHbA1cInput(targetHbA1c);
+              handleSelectSubView('protocol');
+              setActionSuccess('Titrated pharmacotherapy regimen applied to Protocol & Rx Engine.');
+              setTimeout(() => setActionSuccess(null), 4000);
+            }}
+          />
+        )}
+
+        {/* 4. AI EARLY WARNINGS SUB-VIEW */}
         {currentSubView === 'alerts' && (
           <div className="space-y-6">
             <div className="bg-white/85 backdrop-blur-md border border-[#8da9c4]/30 rounded-2xl p-6 shadow-md">
@@ -678,7 +633,7 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
                       <strong className="text-[#0b2545] font-bold text-sm">{rxTargetPatient.full_name}</strong>
                       <span className="text-slate-500 font-mono ml-1.5">({rxTargetPatient.synthea_id} · {rxTargetPatient.age}y)</span>
                     </div>
-                    <div className="flex items-center gap-4 font-mono font-bold text-[#0b2545]">
+                    <div className="flex flex-wrap items-center gap-2.5 sm:gap-4 font-mono font-bold text-[#0b2545]">
                       <span>Baseline HbA1c: {rxTargetPatient.baselineLabs?.hba1c}%</span>
                       <span>Fasting Glucose: {rxTargetPatient.baselineLabs?.fastingGlucose} mg/dL</span>
                       <span>eGFR: {rxTargetPatient.baselineLabs?.egfr} mL/min</span>

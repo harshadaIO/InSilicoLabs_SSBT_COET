@@ -338,7 +338,7 @@ export const DigitalTwinVisual: React.FC<DigitalTwinVisualProps> = ({
       <div className="flex flex-wrap gap-2 p-1.5 bg-[#eef4ed] border border-[#8da9c4]/30 rounded-xl">
         <button
           onClick={() => setActiveSystem('pancreas')}
-          className={`flex-1 min-w-[140px] py-2 px-3 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2 whitespace-nowrap ${
+          className={`flex-1 min-w-[130px] sm:min-w-[140px] min-h-[40px] py-2 px-3 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 whitespace-nowrap ${
             activeSystem === 'pancreas'
               ? 'bg-[#134074] text-white shadow-sm'
               : 'text-[#0b2545] hover:bg-white/70'
@@ -350,7 +350,7 @@ export const DigitalTwinVisual: React.FC<DigitalTwinVisualProps> = ({
 
         <button
           onClick={() => setActiveSystem('hepatic')}
-          className={`flex-1 min-w-[140px] py-2 px-3 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2 whitespace-nowrap ${
+          className={`flex-1 min-w-[130px] sm:min-w-[140px] min-h-[40px] py-2 px-3 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 whitespace-nowrap ${
             activeSystem === 'hepatic'
               ? 'bg-[#134074] text-white shadow-sm'
               : 'text-[#0b2545] hover:bg-white/70'
@@ -362,7 +362,7 @@ export const DigitalTwinVisual: React.FC<DigitalTwinVisualProps> = ({
 
         <button
           onClick={() => setActiveSystem('vascular')}
-          className={`flex-1 min-w-[140px] py-2 px-3 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2 whitespace-nowrap ${
+          className={`flex-1 min-w-[130px] sm:min-w-[140px] min-h-[40px] py-2 px-3 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 whitespace-nowrap ${
             activeSystem === 'vascular'
               ? 'bg-[#134074] text-white shadow-sm'
               : 'text-[#0b2545] hover:bg-white/70'
@@ -374,7 +374,7 @@ export const DigitalTwinVisual: React.FC<DigitalTwinVisualProps> = ({
 
         <button
           onClick={() => setActiveSystem('cgm')}
-          className={`flex-1 min-w-[140px] py-2 px-3 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2 whitespace-nowrap ${
+          className={`flex-1 min-w-[130px] sm:min-w-[140px] min-h-[40px] py-2 px-3 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 whitespace-nowrap ${
             activeSystem === 'cgm'
               ? 'bg-[#134074] text-white shadow-sm'
               : 'text-[#0b2545] hover:bg-white/70'
@@ -386,7 +386,7 @@ export const DigitalTwinVisual: React.FC<DigitalTwinVisualProps> = ({
 
         <button
           onClick={() => setActiveSystem('skeletal_muscle')}
-          className={`flex-1 min-w-[140px] py-2 px-3 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2 whitespace-nowrap ${
+          className={`flex-1 min-w-[130px] sm:min-w-[140px] min-h-[40px] py-2 px-3 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 whitespace-nowrap ${
             activeSystem === 'skeletal_muscle'
               ? 'bg-[#134074] text-white shadow-sm'
               : 'text-[#0b2545] hover:bg-white/70'

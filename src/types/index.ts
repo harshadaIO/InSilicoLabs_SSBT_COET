@@ -31,6 +31,10 @@ export interface BaselineLabs {
   diastolicBp: number;
   creatinine?: number;
   creatinineUnit?: string;
+  totalCholesterol?: number;
+  alt?: number;
+  ast?: number;
+  uacr?: number;
 }
 
 export interface CarePlan {
@@ -56,6 +60,8 @@ export interface PatientProfile {
   id: string;
   user_id?: string | null;
   synthea_id: string;
+  abha_id?: string;
+  primary_doctor?: string;
   full_name: string;
   age: number;
   gender: string;
@@ -77,6 +83,7 @@ export interface PatientProfile {
   currentHeartRate?: number;
   lastTelemetryAt?: string;
   activeAlertsCount?: number;
+  adherencePercent?: number;
 }
 
 export interface WearableLog {

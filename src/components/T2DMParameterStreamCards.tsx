@@ -71,34 +71,34 @@ export const T2DMParameterStreamCards: React.FC<T2DMParameterStreamCardsProps> =
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
           <span className="text-xs font-bold uppercase tracking-wider text-[#134074]">
             Comprehensive T2DM Multi-Stream Telemetry
           </span>
-          <h2 className="text-xl font-extrabold text-[#0b2545] mt-0.5">
+          <h2 className="text-lg sm:text-xl font-extrabold text-[#0b2545] mt-0.5">
             Static EHR Baseline Diagnostics vs Dynamic Wearable Streams
           </h2>
         </div>
-        <div className="hidden sm:flex items-center gap-2 text-xs font-mono text-[#13315c] bg-white/80 px-3 py-1.5 rounded-xl border border-[#8da9c4]/30">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+        <div className="flex items-center gap-2 text-xs font-mono text-[#13315c] bg-white/80 px-3 py-1.5 rounded-xl border border-[#8da9c4]/30 w-fit">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
           <span>Synthea FHIR & BLE Fusion Active</span>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-stretch">
         {/* CARD 1: Static EHR Baseline Card */}
-        <div className="bg-white/85 backdrop-blur-md border border-[#8da9c4]/30 rounded-2xl p-6 shadow-md flex flex-col justify-between space-y-6">
+        <div className="bg-white/85 backdrop-blur-md border border-[#8da9c4]/30 rounded-2xl p-4 sm:p-6 shadow-md flex flex-col justify-between space-y-6">
           <div className="space-y-5">
             {/* Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-[#8da9c4]/20">
+            <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#8da9c4]/20">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#0b2545] border border-[#134074] flex items-center justify-center text-[#8da9c4] shadow-sm">
+                <div className="w-10 h-10 rounded-xl bg-[#0b2545] border border-[#134074] flex items-center justify-center text-[#8da9c4] shadow-sm shrink-0">
                   <FileText className="w-5 h-5 text-[#8da9c4]" />
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-base font-bold text-[#0b2545]">Static EHR Baseline Profile</h3>
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                    <h3 className="text-sm sm:text-base font-bold text-[#0b2545]">Static EHR Baseline Profile</h3>
                     <span className="text-[10px] font-mono px-2 py-0.5 bg-[#eef4ed] text-[#134074] rounded font-bold border border-[#8da9c4]/40">
                       LOINC & SNOMED
                     </span>
@@ -108,7 +108,7 @@ export const T2DMParameterStreamCards: React.FC<T2DMParameterStreamCardsProps> =
                   </div>
                 </div>
               </div>
-              <span className="text-xs font-mono font-semibold text-[#13315c] bg-white px-2.5 py-1 rounded-lg border border-[#8da9c4]/30">
+              <span className="text-xs font-mono font-semibold text-[#13315c] bg-white px-2.5 py-1 rounded-lg border border-[#8da9c4]/30 shrink-0">
                 #{profile.synthea_id}
               </span>
             </div>
@@ -119,7 +119,7 @@ export const T2DMParameterStreamCards: React.FC<T2DMParameterStreamCardsProps> =
                 <User className="w-3.5 h-3.5 text-[#134074]" />
                 <span>Demographics & Anthropometrics</span>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+              <div className="grid grid-cols-1 min-[440px]:grid-cols-2 sm:grid-cols-3 gap-2.5">
                 <div className="p-3 bg-[#eef4ed]/70 border border-[#8da9c4]/30 rounded-xl">
                   <div className="text-[10px] uppercase font-bold text-slate-500">Age & Gender</div>
                   <div className="text-sm font-extrabold font-mono text-[#0b2545] mt-0.5">
@@ -136,7 +136,7 @@ export const T2DMParameterStreamCards: React.FC<T2DMParameterStreamCardsProps> =
                   <div className="text-[10px] text-amber-700 font-semibold mt-0.5">Overweight Class 1</div>
                 </div>
 
-                <div className="p-3 bg-[#eef4ed]/70 border border-[#8da9c4]/30 rounded-xl col-span-2 sm:col-span-1">
+                <div className="p-3 bg-[#eef4ed]/70 border border-[#8da9c4]/30 rounded-xl col-span-1 min-[440px]:col-span-2 sm:col-span-1">
                   <div className="text-[10px] uppercase font-bold text-slate-500">Waist-to-Hip Ratio</div>
                   <div className="text-sm font-extrabold font-mono text-[#0b2545] mt-0.5">
                     {anthropometrics.waistToHipRatio}
@@ -158,7 +158,7 @@ export const T2DMParameterStreamCards: React.FC<T2DMParameterStreamCardsProps> =
                 <Activity className="w-3.5 h-3.5 text-[#134074]" />
                 <span>Clinical Laboratory Markers (LOINC Standards)</span>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+              <div className="grid grid-cols-1 min-[440px]:grid-cols-2 sm:grid-cols-3 gap-2.5">
                 <div className="p-3 bg-white border border-[#8da9c4]/30 rounded-xl shadow-2xs">
                   <div className="text-[10px] uppercase font-bold text-slate-500">Baseline HbA1c</div>
                   <div className="text-lg font-extrabold font-mono text-[#0b2545] mt-0.5">
@@ -350,7 +350,7 @@ export const T2DMParameterStreamCards: React.FC<T2DMParameterStreamCardsProps> =
                 <Heart className="w-3.5 h-3.5 text-[#134074]" />
                 <span>Autonomic & Hemodynamic Tone</span>
               </div>
-              <div className="grid grid-cols-3 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 <div className="p-3 bg-white border border-[#8da9c4]/30 rounded-xl shadow-2xs">
                   <div className="text-[10px] uppercase font-bold text-slate-500">Resting HR</div>
                   <div className="text-lg font-extrabold font-mono text-[#0b2545] mt-0.5">
@@ -383,7 +383,7 @@ export const T2DMParameterStreamCards: React.FC<T2DMParameterStreamCardsProps> =
                 <Moon className="w-3.5 h-3.5 text-[#134074]" />
                 <span>Sleep Architecture & Activity Telemetry</span>
               </div>
-              <div className="grid grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <div className="p-3 bg-[#eef4ed]/70 border border-[#8da9c4]/30 rounded-xl space-y-1">
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-bold text-[#0b2545]">Sleep Stages (7h 14m)</span>

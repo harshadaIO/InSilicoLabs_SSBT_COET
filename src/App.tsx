@@ -68,7 +68,7 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#eef4ed] text-slate-900 font-sans">
+    <div className="min-h-screen flex flex-col bg-[#eef4ed] text-slate-900 font-sans max-w-full overflow-x-hidden">
       {/* Dynamic RBAC Navbar */}
       <Navbar
         authRole={authRole}

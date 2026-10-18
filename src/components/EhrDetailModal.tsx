@@ -53,7 +53,7 @@ export const EhrDetailModal: React.FC<EhrDetailModalProps> = ({
                 <h3 className="text-base font-bold text-white">{patient.full_name}</h3>
                 <RiskBadge level={patient.risk_level} />
               </div>
-              <div className="text-xs text-slate-300 flex items-center gap-2 mt-0.5">
+              <div className="text-xs text-slate-300 flex flex-wrap items-center gap-x-2 gap-y-1 mt-0.5">
                 <span>Synthea EHR #{patient.synthea_id}</span>
                 <span>·</span>
                 <span>{patient.age} y/o {patient.gender}</span>

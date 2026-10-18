@@ -18,7 +18,8 @@ import {
   Sparkles,
   TrendingUp,
   Moon,
-  Info
+  Info,
+  HeartPulse
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -67,12 +68,12 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
   // "What-If" Simulation Form State with Indian Healthcare Dietary Context
   const [selectedMealOption, setSelectedMealOption] = useState<string>('High-GI Meal: White Rice / Biryani + Sweet (85g Carbs)');
   const [scenarioName, setScenarioName] = useState('High-GI Meal: White Rice / Biryani + Sweet (85g Carbs)');
-  const [scenarioType, setScenarioType] = useState<'meal_spike' | 'exercise_rebound' | 'medication_skip' | 'acute_stress' | 'late_snack' | 'custom'>('meal_spike');
+  const [scenarioType, setScenarioType] = useState<'meal_spike' | 'exercise_rebound' | 'lifestyle_balance' | 'acute_stress' | 'fasting' | 'custom'>('meal_spike');
   const [carbs, setCarbs] = useState(85);
   const [glycemicIndex, setGlycemicIndex] = useState<'Low' | 'Medium' | 'High'>('High');
   const [activityMins, setActivityMins] = useState(0);
   const [activityIntensity, setActivityIntensity] = useState<'Rest' | 'Light Walk' | 'Brisk Walk' | 'HIIT/Vigorous'>('Rest');
-  const [medicationStatus, setMedicationStatus] = useState<'Normal Dose' | 'Skipped Dose' | 'Delayed 2hr'>('Normal Dose');
+  const [sleepDuration, setSleepDuration] = useState<'5h_poor' | '7.5h_restful' | '9h_restorative'>('7.5h_restful');
   const [stressLevel, setStressLevel] = useState<'Low' | 'Moderate' | 'Severe / Cortisol Surge'>('Low');
 
   const [isSimulating, setIsSimulating] = useState(false);
@@ -175,49 +176,49 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
   };
 
   // Preset Scenario Pickers
-  const selectPreset = (type: 'biryani' | 'rotis' | 'millet' | 'fasting' | 'brisk_walk' | 'skipped_med') => {
+  const selectPreset = (type: 'biryani' | 'rotis' | 'millet' | 'fasting' | 'post_meal_walk' | 'sleep_stress') => {
     if (type === 'biryani') {
       handleMealOptionSelect('High-GI Meal: White Rice / Biryani + Sweet (85g Carbs)');
       setActivityMins(0);
       setActivityIntensity('Rest');
-      setMedicationStatus('Normal Dose');
+      setSleepDuration('7.5h_restful');
       setStressLevel('Low');
     } else if (type === 'rotis') {
       handleMealOptionSelect('Moderate-GI Meal: 2 Wheat Rotis, Dal & Sabzi (45g Carbs)');
       setActivityMins(0);
       setActivityIntensity('Rest');
-      setMedicationStatus('Normal Dose');
+      setSleepDuration('7.5h_restful');
       setStressLevel('Low');
     } else if (type === 'millet') {
       handleMealOptionSelect('Low-GI Therapeutic Meal: Millet Roti, Paneer/Protein & Fiber Salad (25g Carbs)');
       setActivityMins(0);
       setActivityIntensity('Rest');
-      setMedicationStatus('Normal Dose');
+      setSleepDuration('7.5h_restful');
       setStressLevel('Low');
     } else if (type === 'fasting') {
       handleMealOptionSelect('Fasting State / Post-Absorptive Baseline (0g Carbs)');
       setActivityMins(0);
       setActivityIntensity('Rest');
-      setMedicationStatus('Normal Dose');
+      setSleepDuration('7.5h_restful');
       setStressLevel('Low');
-    } else if (type === 'brisk_walk') {
-      setScenarioName('Post-Meal 25-Min Brisk Walk (GLUT4 Translocation)');
+    } else if (type === 'post_meal_walk') {
+      setScenarioName('High-GI Biryani + 25-min Post-Meal Brisk Walk (GLUT4 Buffering)');
       setScenarioType('exercise_rebound');
-      setCarbs(45);
-      setGlycemicIndex('Medium');
+      setCarbs(85);
+      setGlycemicIndex('High');
       setActivityMins(25);
       setActivityIntensity('Brisk Walk');
-      setMedicationStatus('Normal Dose');
+      setSleepDuration('7.5h_restful');
       setStressLevel('Low');
-    } else if (type === 'skipped_med') {
-      setScenarioName('Skipped Evening Metformin Dose (Hepatic Flux)');
-      setScenarioType('medication_skip');
+    } else if (type === 'sleep_stress') {
+      setScenarioName('Short Sleep (5h Poor Sleep) + High Daily Stress (Cortisol Surge)');
+      setScenarioType('acute_stress');
       setCarbs(45);
       setGlycemicIndex('Medium');
       setActivityMins(0);
       setActivityIntensity('Rest');
-      setMedicationStatus('Skipped Dose');
-      setStressLevel('Low');
+      setSleepDuration('5h_poor');
+      setStressLevel('Severe / Cortisol Surge');
     }
   };
 
@@ -233,12 +234,14 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
       const simulationInput = {
         scenarioName,
         scenarioType,
+        nutritionalInput: selectedMealOption,
         carbohydrates: carbs,
         glycemicIndex,
         activityDurationMin: activityMins,
-        activityIntensity,
-        medicationStatus,
-        stressLevel
+        activityIntensity: activityMins >= 25 ? 'Brisk Walk' : (activityMins > 0 ? 'Light Walk' : 'Rest'),
+        sleepStress: sleepDuration === '5h_poor' ? 'Sleep Deprived - 5.0 hrs / Elevated Cortisol' : (sleepDuration === '9h_restorative' ? 'Deep Restorative Sleep - 9.0 hrs' : 'Optimal Sleep - 7.5 hrs'),
+        stressLevel,
+        medicationStatus: 'Normal Dose'
       };
 
       const res = await fetch('/api/simulation/run', {
@@ -303,18 +306,18 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
             </div>
 
             {/* Quick Metrics & Actions */}
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="p-3.5 bg-white/90 border border-[#8da9c4]/30 rounded-xl text-right shadow-2xs">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 w-full md:w-auto">
+              <div className="p-3 sm:p-3.5 bg-white/90 border border-[#8da9c4]/30 rounded-xl text-left sm:text-right shadow-2xs">
                 <div className="text-[11px] uppercase tracking-wider text-slate-500 font-bold">Wellness Score</div>
                 <div className="text-2xl font-bold font-mono text-[#0b2545] mt-0.5">
                   {profile?.wellness_score || 71} <span className="text-xs font-normal text-slate-400">/ 100</span>
                 </div>
               </div>
 
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col sm:flex-row md:flex-col gap-2 w-full sm:w-auto">
                 <button
                   onClick={() => setIsEhrModalOpen(true)}
-                  className="px-4 py-2 text-xs font-bold text-[#0b2545] bg-white border border-[#8da9c4]/40 hover:bg-[#eef4ed] rounded-xl transition-colors flex items-center gap-1.5 shadow-2xs whitespace-nowrap"
+                  className="min-h-[42px] px-4 py-2 text-xs font-bold text-[#0b2545] bg-white border border-[#8da9c4]/40 hover:bg-[#eef4ed] rounded-xl transition-colors flex items-center justify-center gap-1.5 shadow-2xs whitespace-nowrap"
                 >
                   <FileText className="w-3.5 h-3.5 text-[#134074]" />
                   <span>View Synthea EHR</span>
@@ -323,7 +326,7 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
                 <button
                   onClick={handleSyncWearable}
                   disabled={isSyncing}
-                  className="px-4 py-2 text-xs font-bold text-white bg-[#134074] hover:bg-[#0b2545] rounded-xl transition-colors flex items-center gap-1.5 shadow-sm whitespace-nowrap disabled:opacity-50"
+                  className="min-h-[42px] px-4 py-2 text-xs font-bold text-white bg-[#134074] hover:bg-[#0b2545] rounded-xl transition-colors flex items-center justify-center gap-1.5 shadow-sm whitespace-nowrap disabled:opacity-50"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 text-[#8da9c4] ${isSyncing ? 'animate-spin' : ''}`} />
                   <span>{isSyncing ? 'Syncing...' : 'Sync Wearable Data'}</span>
@@ -386,7 +389,7 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
           </div>
 
           {/* Stat Ribbon */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <div className="p-3.5 bg-white/90 border border-[#8da9c4]/30 rounded-xl shadow-2xs">
               <div className="text-[11px] font-bold uppercase text-[#134074]">Current CGM Interstitial</div>
               <div className="text-2xl font-bold font-mono text-[#0b2545] mt-1">
@@ -489,85 +492,85 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
             <div>
               <div className="flex items-center gap-2 text-[#134074] font-bold text-xs uppercase tracking-wider">
                 <Zap className="w-3.5 h-3.5 text-[#134074]" />
-                <span>Predictive Forward Simulation Engine</span>
+                <span>Behavioral & Lifestyle Self-Management Engine</span>
               </div>
-              <h3 className="text-xl font-bold text-[#0b2545] mt-0.5">
-                "What-If" Lifestyle & Meal Perturbation Simulator
+              <h3 className="text-xl sm:text-2xl font-extrabold text-[#0b2545] mt-1">
+                Lifestyle & Meal What-If Simulator
               </h3>
-              <p className="text-xs text-slate-700 mt-0.5">
-                Evaluates static Synthea EHR baselines and continuous telemetry to compute 2-hour forward physiological trajectories.
+              <p className="text-xs sm:text-sm text-slate-700 mt-1 max-w-3xl">
+                Test how your everyday food choices, post-meal walking, sleep duration, and daily stress shape your continuous glucose levels over the next 3 hours.
               </p>
             </div>
 
-            <span className="text-xs font-mono px-3 py-1 rounded-lg bg-[#eef4ed] text-[#134074] border border-[#8da9c4]/40 font-bold">
-              Dynamic In-Silico Modeling
+            <span className="text-xs font-mono px-3 py-1.5 rounded-xl bg-[#eef4ed] text-[#134074] border border-[#8da9c4]/40 font-bold whitespace-nowrap">
+              3-Hour In-Silico CGM Modeling
             </span>
           </div>
 
           {/* Quick Scenario Preset Chips */}
           <div>
             <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
-              Preset Indian Clinical Scenarios (1-Click)
+              Preset Indian Lifestyle Scenarios (1-Click)
             </label>
             <div className="flex flex-wrap gap-2">
               <button
                 type="button"
                 onClick={() => selectPreset('biryani')}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors whitespace-nowrap ${
-                  carbs === 85 && glycemicIndex === 'High' ? 'bg-[#134074] border-[#134074] text-white shadow-xs' : 'bg-white border-[#8da9c4]/40 text-[#0b2545] hover:bg-[#eef4ed]'
+                className={`min-h-[38px] px-3.5 py-2 text-xs font-semibold rounded-xl border transition-colors whitespace-nowrap flex items-center justify-center ${
+                  carbs === 85 && glycemicIndex === 'High' && activityMins === 0 ? 'bg-[#134074] border-[#134074] text-white shadow-xs' : 'bg-white border-[#8da9c4]/40 text-[#0b2545] hover:bg-[#eef4ed]'
                 }`}
               >
-                Biryani & Sweet (85g CHO)
+                High-GI Biryani + Sweet (85g Carbs)
               </button>
               <button
                 type="button"
                 onClick={() => selectPreset('rotis')}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors whitespace-nowrap ${
-                  carbs === 45 && scenarioType === 'meal_spike' ? 'bg-[#134074] border-[#134074] text-white shadow-xs' : 'bg-white border-[#8da9c4]/40 text-[#0b2545] hover:bg-[#eef4ed]'
+                className={`min-h-[38px] px-3.5 py-2 text-xs font-semibold rounded-xl border transition-colors whitespace-nowrap flex items-center justify-center ${
+                  carbs === 45 && activityMins === 0 && sleepDuration === '7.5h_restful' ? 'bg-[#134074] border-[#134074] text-white shadow-xs' : 'bg-white border-[#8da9c4]/40 text-[#0b2545] hover:bg-[#eef4ed]'
                 }`}
               >
-                2 Rotis, Dal & Sabzi (45g CHO)
+                Moderate-GI 2 Rotis & Dal (45g Carbs)
               </button>
               <button
                 type="button"
                 onClick={() => selectPreset('millet')}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors whitespace-nowrap ${
+                className={`min-h-[38px] px-3.5 py-2 text-xs font-semibold rounded-xl border transition-colors whitespace-nowrap flex items-center justify-center ${
                   carbs === 25 ? 'bg-[#134074] border-[#134074] text-white shadow-xs' : 'bg-white border-[#8da9c4]/40 text-[#0b2545] hover:bg-[#eef4ed]'
                 }`}
               >
-                Millet & Paneer Salad (25g CHO)
+                Low-GI Millet Roti & Paneer (25g Carbs)
               </button>
               <button
                 type="button"
                 onClick={() => selectPreset('fasting')}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors whitespace-nowrap ${
+                className={`min-h-[38px] px-3.5 py-2 text-xs font-semibold rounded-xl border transition-colors whitespace-nowrap flex items-center justify-center ${
                   carbs === 0 ? 'bg-[#134074] border-[#134074] text-white shadow-xs' : 'bg-white border-[#8da9c4]/40 text-[#0b2545] hover:bg-[#eef4ed]'
                 }`}
               >
-                Fasting Baseline (0g CHO)
+                Fasting Baseline (0g Carbs)
               </button>
               <button
                 type="button"
-                onClick={() => selectPreset('brisk_walk')}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors whitespace-nowrap ${
-                  scenarioType === 'exercise_rebound' ? 'bg-[#134074] border-[#134074] text-white shadow-xs' : 'bg-white border-[#8da9c4]/40 text-[#0b2545] hover:bg-[#eef4ed]'
+                onClick={() => selectPreset('post_meal_walk')}
+                className={`min-h-[38px] px-3.5 py-2 text-xs font-semibold rounded-xl border transition-colors whitespace-nowrap flex items-center justify-center ${
+                  activityMins === 25 ? 'bg-[#134074] border-[#134074] text-white shadow-xs' : 'bg-white border-[#8da9c4]/40 text-[#0b2545] hover:bg-[#eef4ed]'
                 }`}
               >
-                25-min Brisk Walk (GLUT4)
+                Biryani + 25-Min Post-Meal Walk (GLUT4)
               </button>
               <button
                 type="button"
-                onClick={() => selectPreset('skipped_med')}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors whitespace-nowrap ${
-                  scenarioType === 'medication_skip' ? 'bg-[#134074] border-[#134074] text-white shadow-xs' : 'bg-white border-[#8da9c4]/40 text-[#0b2545] hover:bg-[#eef4ed]'
+                onClick={() => selectPreset('sleep_stress')}
+                className={`min-h-[38px] px-3.5 py-2 text-xs font-semibold rounded-xl border transition-colors whitespace-nowrap flex items-center justify-center ${
+                  sleepDuration === '5h_poor' ? 'bg-[#134074] border-[#134074] text-white shadow-xs' : 'bg-white border-[#8da9c4]/40 text-[#0b2545] hover:bg-[#eef4ed]'
                 }`}
               >
-                Skipped Metformin Dose
+                5h Short Sleep + High Daily Stress
               </button>
             </div>
           </div>
 
-          {/* Interactive Simulation Form */}
+          {/* Interactive Lifestyle Simulation Form */}
           <form onSubmit={handleRunSimulation} className="bg-white/90 p-5 rounded-2xl border border-[#8da9c4]/30 space-y-4 shadow-xs">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Indian Dietary Options Dropdown */}
@@ -620,9 +623,9 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
                   className="w-full accent-[#134074]"
                 />
                 <div className="flex justify-between text-[10px] text-slate-500 mt-0.5">
-                  <span>0g (Keto)</span>
+                  <span>0g (Fasting)</span>
                   <span>75g (Standard)</span>
-                  <span>150g (High)</span>
+                  <span>150g (High Load)</span>
                 </div>
               </div>
 
@@ -636,16 +639,16 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
                   onChange={(e) => setGlycemicIndex(e.target.value as any)}
                   className="w-full text-xs p-2.5 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-[#134074] focus:outline-none text-[#0b2545]"
                 >
-                  <option value="Low">Low GI (Legumes, Oats, Slow Release)</option>
-                  <option value="Medium">Medium GI (Whole grains, Fruits)</option>
-                  <option value="High">High GI (White rice, Sweets, Soda)</option>
+                  <option value="Low">Low GI (Millet, Paneer, Fiber Salad)</option>
+                  <option value="Medium">Medium GI (Whole Wheat Rotis, Dal)</option>
+                  <option value="High">High GI (White Rice, Biryani, Sweets)</option>
                 </select>
               </div>
 
               {/* Physical Activity */}
               <div>
                 <div className="flex items-center justify-between text-xs font-bold text-[#0b2545] mb-1">
-                  <span>Post-Meal Physical Activity</span>
+                  <span>Post-Meal Physical Activity (Walking)</span>
                   <span className="font-mono text-[#134074]">{activityMins} mins</span>
                 </div>
                 <input
@@ -658,37 +661,37 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
                   className="w-full accent-[#134074]"
                 />
                 <div className="flex justify-between text-[10px] text-slate-500 mt-0.5">
-                  <span>0m (Rest)</span>
-                  <span>30m</span>
-                  <span>60m (Brisk)</span>
+                  <span>0m (Sedentary)</span>
+                  <span>20m (Brisk Walk)</span>
+                  <span>60m (Active)</span>
                 </div>
               </div>
 
-              {/* Medication State */}
+              {/* Sleep Duration */}
               <div>
                 <label className="block text-xs font-bold text-[#0b2545] mb-1">
-                  Pharmacotherapy / Medication State
+                  Prior Night Sleep Duration
                 </label>
                 <select
-                  value={medicationStatus}
-                  onChange={(e) => setMedicationStatus(e.target.value as any)}
-                  className="w-full text-xs p-2.5 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-[#134074] focus:outline-none text-[#0b2545]"
+                  value={sleepDuration}
+                  onChange={(e) => setSleepDuration(e.target.value as any)}
+                  className="w-full text-xs p-2.5 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-[#134074] focus:outline-none text-[#0b2545] font-medium"
                 >
-                  <option value="Normal Dose">Normal Dose (Metformin 850mg taken)</option>
-                  <option value="Skipped Dose">Skipped Dose (Omitted)</option>
-                  <option value="Delayed 2hr">Delayed by 2 Hours</option>
+                  <option value="5h_poor">5.0 hrs (Poor / Restless · Cortisol Surge)</option>
+                  <option value="7.5h_restful">7.5 hrs (Restful Baseline Sleep)</option>
+                  <option value="9h_restorative">9.0 hrs (Deep Restorative Sleep)</option>
                 </select>
               </div>
 
               {/* Psychosocial Stress */}
               <div>
                 <label className="block text-xs font-bold text-[#0b2545] mb-1">
-                  Autonomic / Cortisol Stress
+                  Daily Stress Factor
                 </label>
                 <select
                   value={stressLevel}
                   onChange={(e) => setStressLevel(e.target.value as any)}
-                  className="w-full text-xs p-2.5 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-[#134074] focus:outline-none text-[#0b2545]"
+                  className="w-full text-xs p-2.5 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-[#134074] focus:outline-none text-[#0b2545] font-medium"
                 >
                   <option value="Low">Low / Relaxed State</option>
                   <option value="Moderate">Moderate Daily Stress</option>
@@ -704,7 +707,7 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
                   className="w-full py-2.5 px-4 text-xs font-bold text-white bg-[#134074] hover:bg-[#0b2545] rounded-xl transition-colors flex items-center justify-center gap-2 disabled:opacity-50 shadow-sm"
                 >
                   <Sparkles className="w-4 h-4 text-[#8da9c4]" />
-                  <span>{isSimulating ? 'Simulating Digital Twin...' : 'Run Simulation'}</span>
+                  <span>{isSimulating ? 'Simulating 3-Hour CGM...' : 'Run What-If Simulation'}</span>
                 </button>
               </div>
             </div>
@@ -720,9 +723,9 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
           {/* Current Simulation Outcome Presentation */}
           {currentSimulation && (
             <div className="space-y-6 pt-2">
-              {/* Projected Metrics Header Strip */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div className="p-3.5 bg-white/90 border border-[#8da9c4]/30 rounded-xl shadow-2xs">
+              {/* Projected Metrics Header Strip (Adaptive 1 -> 2 -> 4 Grid) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                <div className="p-3.5 sm:p-4 bg-white/90 border border-[#8da9c4]/30 rounded-2xl shadow-2xs">
                   <div className="text-[11px] font-bold uppercase text-[#134074]">Peak Projected Glucose</div>
                   <div className="text-2xl font-bold font-mono text-[#0b2545] mt-1">
                     {currentSimulation.predictedMetrics.peakGlucose} <span className="text-xs font-normal text-slate-500">mg/dL</span>
@@ -759,14 +762,89 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
                 </div>
               </div>
 
-              {/* Projected Curve Visualization (Recharts) */}
+              {/* Immediate Behavioral Feedback Strip */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* 1. Postprandial Spike Feedback */}
+                <div className={`p-4 rounded-2xl border transition-all shadow-2xs ${
+                  currentSimulation.predictedMetrics.peakGlucose > 180
+                    ? 'bg-rose-50/70 border-rose-200 text-rose-900'
+                    : 'bg-emerald-50/70 border-emerald-200 text-emerald-900'
+                }`}>
+                  <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider mb-1">
+                    {currentSimulation.predictedMetrics.peakGlucose > 180 ? (
+                      <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+                    ) : (
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    )}
+                    <span>Postprandial Spike Status</span>
+                  </div>
+                  <div className="text-xs font-semibold">
+                    {currentSimulation.predictedMetrics.peakGlucose > 180
+                      ? `Spike Warning: Peak of ${currentSimulation.predictedMetrics.peakGlucose} mg/dL exceeds target (< 180 mg/dL) at ${currentSimulation.predictedMetrics.timeToPeak} mins.`
+                      : `Target Preserved: Peak of ${currentSimulation.predictedMetrics.peakGlucose} mg/dL remains within safe postprandial target.`}
+                  </div>
+                  <p className="text-[11px] text-slate-600 mt-1">
+                    {currentSimulation.predictedMetrics.peakGlucose > 180
+                      ? 'Swap high-GI carbs for fiber/paneer or take a 15-min walk to blunt this excursion.'
+                      : 'Meal glycemic load is well-buffered by your basal insulin sensitivity.'}
+                  </p>
+                </div>
+
+                {/* 2. Physical Activity & GLUT4 Buffering */}
+                <div className="p-4 bg-white border border-[#8da9c4]/30 rounded-2xl shadow-2xs text-[#0b2545]">
+                  <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-[#134074] mb-1">
+                    <Activity className="w-4 h-4 text-[#134074] shrink-0" />
+                    <span>GLUT4 Exercise Buffering</span>
+                  </div>
+                  <div className="text-xs font-semibold">
+                    {activityMins > 0
+                      ? `${activityMins} min walk recruits non-insulin muscle glucose uptake.`
+                      : 'No post-meal walking simulated.'}
+                  </div>
+                  <p className="text-[11px] text-slate-600 mt-1">
+                    {activityMins > 0
+                      ? `Attenuates excursion apex by approximately ~${Math.min(48, Math.round(activityMins * 1.1))} mg/dL.`
+                      : 'A brief 15-20 min post-meal walk stimulates GLUT4 transporters, blunting spikes by 25-35 mg/dL.'}
+                  </p>
+                </div>
+
+                {/* 3. Sleep & Daily Stress Factor */}
+                <div className="p-4 bg-white border border-[#8da9c4]/30 rounded-2xl shadow-2xs text-[#0b2545]">
+                  <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-[#134074] mb-1">
+                    <HeartPulse className="w-4 h-4 text-[#134074] shrink-0" />
+                    <span>Sleep & Autonomic Stress Buffer</span>
+                  </div>
+                  <div className="text-xs font-semibold">
+                    {sleepDuration === '5h_poor' || stressLevel.includes('Severe')
+                      ? 'Elevated Cortisol / Sympathetic Surge'
+                      : 'Restful Sleep & Stable Autonomic Tone'}
+                  </div>
+                  <p className="text-[11px] text-slate-600 mt-1">
+                    {sleepDuration === '5h_poor' || stressLevel.includes('Severe')
+                      ? 'Sleep debt and acute stress trigger cortisol gluconeogenesis, increasing glycemic excursion.'
+                      : 'Restful sleep maintains baseline insulin sensitivity and protects dawn glycemic control.'}
+                  </p>
+                </div>
+              </div>
+
+              {/* 3-Hour Projected Curve Visualization (Recharts) */}
               <div className="bg-white/90 p-5 rounded-2xl border border-[#8da9c4]/30 space-y-3 shadow-xs">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-[#0b2545] flex items-center gap-1.5">
                     <TrendingUp className="w-4 h-4 text-[#134074]" />
-                    <span>2-Hour Forward Trajectory: Projected Curve vs Counterfactual Baseline</span>
+                    <span>3-Hour Projected CGM Glucose Curve (180 Minutes)</span>
                   </h4>
-                  <span className="text-[11px] text-slate-500 font-medium">15-minute discrete intervals</span>
+                  <div className="flex items-center gap-3 text-[11px] text-slate-500 font-medium">
+                    <span className="flex items-center gap-1">
+                      <span className="w-2.5 h-0.5 bg-[#ef4444] inline-block" />
+                      <span>Ceiling (180 mg/dL)</span>
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <span className="w-2.5 h-0.5 bg-[#f59e0b] inline-block" />
+                      <span>Hypo Threshold (70 mg/dL)</span>
+                    </span>
+                    <span>15-min intervals</span>
+                  </div>
                 </div>
 
                 <div className="h-64 w-full">
@@ -795,7 +873,8 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
                         }}
                       />
                       <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '8px' }} />
-                      <ReferenceLine y={180} stroke="#f87171" strokeDasharray="3 3" label={{ value: 'Target Max (180)', fill: '#ef4444', fontSize: 10 }} />
+                      <ReferenceLine y={180} stroke="#ef4444" strokeDasharray="3 3" label={{ value: 'Target Max (180)', fill: '#ef4444', fontSize: 10 }} />
+                      <ReferenceLine y={70} stroke="#f59e0b" strokeDasharray="3 3" label={{ value: 'Target Min (70)', fill: '#d97706', fontSize: 10 }} />
 
                       <Line
                         type="monotone"
@@ -839,14 +918,14 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
                   </p>
                   <div className="text-[11px] text-slate-500 pt-2 border-t border-[#8da9c4]/20 flex items-center justify-between font-medium">
                     <span>Validated In-Silico Dynamic Model</span>
-                    <span>Compartment Kinetics</span>
+                    <span>3-Hour Kinetic Horizons</span>
                   </div>
                 </div>
 
                 <div className="md:col-span-5 p-5 bg-white/90 border border-[#8da9c4]/30 rounded-2xl space-y-2 shadow-2xs">
                   <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#134074]">
                     <CheckCircle2 className="w-3.5 h-3.5 text-[#134074]" />
-                    <span>Personalized Digital Twin Guidance</span>
+                    <span>Personalized Behavioral Guidance</span>
                   </div>
                   <div className="space-y-2 text-xs text-slate-800">
                     {currentSimulation.aiRecommendations && currentSimulation.aiRecommendations.map((rec, i) => (

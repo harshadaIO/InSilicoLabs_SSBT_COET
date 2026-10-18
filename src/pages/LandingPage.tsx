@@ -62,10 +62,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLoginModal, isLo
             </p>
 
             {/* Primary Action Buttons */}
-            <div className="flex flex-wrap items-center gap-4 pt-2">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 pt-2 w-full sm:w-auto">
               <button
                 onClick={handleLaunchPatient}
-                className="px-6 py-3 text-sm font-bold text-white bg-[#134074] hover:bg-[#0b2545] rounded-xl shadow-md transition-all flex items-center gap-2 group"
+                className="w-full sm:w-auto justify-center min-h-[48px] px-5 sm:px-6 py-3 text-sm font-bold text-white bg-[#134074] hover:bg-[#0b2545] rounded-xl shadow-md transition-all flex items-center gap-2 group"
               >
                 <span>Launch Patient Digital Twin</span>
                 <ArrowRight className="w-4 h-4 text-[#8da9c4] group-hover:translate-x-0.5 transition-transform" />
@@ -73,7 +73,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLoginModal, isLo
 
               <button
                 onClick={handleLaunchDoctor}
-                className="px-6 py-3 text-sm font-bold text-[#0b2545] bg-white/90 border border-[#8da9c4]/50 hover:bg-white rounded-xl shadow-xs transition-all flex items-center gap-2"
+                className="w-full sm:w-auto justify-center min-h-[48px] px-5 sm:px-6 py-3 text-sm font-bold text-[#0b2545] bg-white/90 border border-[#8da9c4]/50 hover:bg-white rounded-xl shadow-xs transition-all flex items-center gap-2"
               >
                 <Stethoscope className="w-4 h-4 text-[#134074]" />
                 <span>Clinician Command Center</span>

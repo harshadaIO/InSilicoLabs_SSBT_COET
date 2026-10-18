@@ -215,18 +215,18 @@ export const TreatmentAdjustModal: React.FC<TreatmentAdjustModalProps> = ({
           </div>
 
           {/* Action Buttons */}
-          <div className="pt-3 border-t border-slate-200 flex items-center justify-end gap-3">
+          <div className="pt-3 border-t border-slate-200 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded-xl transition-colors"
+              className="min-h-[42px] px-4 py-2.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded-xl transition-colors text-center"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-5 py-2.5 text-xs font-bold text-white bg-[#134074] hover:bg-[#0b2545] rounded-xl transition-colors flex items-center gap-1.5 disabled:opacity-50 shadow-sm"
+              className="min-h-[42px] px-5 py-2.5 text-xs font-bold text-white bg-[#134074] hover:bg-[#0b2545] rounded-xl transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50 shadow-sm"
             >
               <Save className="w-3.5 h-3.5 text-[#8da9c4]" />
               <span>{isSubmitting ? 'Updating Database...' : 'Save & Enforce Protocol'}</span>
