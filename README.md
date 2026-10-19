@@ -6,7 +6,7 @@
 
 ## Team & Submission Details
 * **Team Name:** InSilico Labs
-* **College / Incubator:** SSBT's COET (Shrama Sadhana Bombay Trust's College of Engineering and Technology)
+* **College / Incubator:** SSBT's College of Engineering and Technology Jalgaon
 * **Team Leader Name:** Harshada Ravindra Mahajan
 * **Contact Number:** 8010459735
 * **Email ID:** mahajanharshada2006@gmail.com
@@ -53,7 +53,13 @@
 
 ---
 
-## 3. Technology Stack
+## 3. Evaluation Documents
+- **[Architecture Diagram PDF](docs/architecture-diagram.pdf)**
+- **[Project Presentation PDF](docs/project-presentation.pdf)**
+
+---
+
+## 4. Technology Stack
 
 - **Frontend**: React.js, Tailwind CSS, React Router, Lucide React, Recharts, Motion
 - **Backend**: Node.js Express (`server.ts` + `server/routes.ts`)
@@ -63,7 +69,7 @@
 
 ---
 
-## 4. Repository Structure & Documentation
+## 5. Repository Structure & Documentation
 
 ```text
 InSilicoLabs_SSBT_COET/
