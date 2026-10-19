@@ -44,6 +44,10 @@ export interface TitrationResult {
   currentFpg: number;
   projectedFpg: number;
   cardiovascularRiskShift: string;
+  tenYearAscvdRiskCurrent?: number;
+  tenYearAscvdRiskProjected?: number;
+  ckdProgressionRiskReductionPercent?: number;
+  ckdProgressionRiskReduction?: string;
   renalProtectionIndex: string;
   hypoglycemiaRisk: 'Negligible' | 'Low' | 'Moderate' | 'Elevated';
   trajectory90Days: Array<{
@@ -485,10 +489,17 @@ export const ClinicalTitrationSimulator: React.FC<ClinicalTitrationSimulatorProp
 
           {/* Cardiorenal Prognosis & Evidence Matrix */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 bg-white border border-[#8da9c4]/30 rounded-xl space-y-1.5 shadow-2xs">
-              <div className="flex items-center gap-1.5 text-xs font-bold uppercase text-[#134074]">
-                <Heart className="w-4 h-4 text-rose-500" />
-                <span>Cardiovascular Risk Shift</span>
+            <div className="p-4 bg-white border border-[#8da9c4]/30 rounded-xl space-y-2 shadow-2xs">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-xs font-bold uppercase text-[#134074]">
+                  <Heart className="w-4 h-4 text-rose-500" />
+                  <span>Cardiovascular Risk & 10-Yr ASCVD</span>
+                </div>
+                {result.tenYearAscvdRiskCurrent !== undefined && (
+                  <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                    10-Yr ASCVD: {result.tenYearAscvdRiskCurrent}% → {result.tenYearAscvdRiskProjected}%
+                  </span>
+                )}
               </div>
               <div className="text-xs font-semibold text-[#0b2545]">{result.cardiovascularRiskShift}</div>
               <p className="text-[11px] text-slate-500">
@@ -496,14 +507,23 @@ export const ClinicalTitrationSimulator: React.FC<ClinicalTitrationSimulatorProp
               </p>
             </div>
 
-            <div className="p-4 bg-white border border-[#8da9c4]/30 rounded-xl space-y-1.5 shadow-2xs">
-              <div className="flex items-center gap-1.5 text-xs font-bold uppercase text-[#134074]">
-                <Droplet className="w-4 h-4 text-[#134074]" />
-                <span>Renal & Microvascular Protection</span>
+            <div className="p-4 bg-white border border-[#8da9c4]/30 rounded-xl space-y-2 shadow-2xs">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-xs font-bold uppercase text-[#134074]">
+                  <Droplet className="w-4 h-4 text-[#134074]" />
+                  <span>Renal & Microvascular Protection</span>
+                </div>
+                {result.ckdProgressionRiskReductionPercent !== undefined && result.ckdProgressionRiskReductionPercent > 0 && (
+                  <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    -{result.ckdProgressionRiskReductionPercent}% CKD Progression
+                  </span>
+                )}
               </div>
-              <div className="text-xs font-semibold text-[#0b2545]">{result.renalProtectionIndex}</div>
+              <div className="text-xs font-semibold text-[#0b2545]">
+                {result.ckdProgressionRiskReduction || result.renalProtectionIndex}
+              </div>
               <p className="text-[11px] text-slate-500">
-                Intraglomerular hemodynamic modulation attenuating hyperfiltration injury.
+                Intraglomerular hemodynamic modulation attenuating hyperfiltration injury (EMPA-KIDNEY / CREDENCE).
               </p>
             </div>
           </div>

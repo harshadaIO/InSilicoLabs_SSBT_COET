@@ -3,7 +3,7 @@ import { Activity, LogOut, ShieldCheck, Stethoscope, User } from 'lucide-react';
 
 export type AuthRole = 'patient' | 'clinician' | null;
 export type PublicView = 'overview' | 'challenge';
-export type PatientSubView = 'twin' | 'simulator' | 'wearables' | 'ehr';
+export type PatientSubView = 'twin' | 'simulator' | 'wearables' | 'ehr' | 'consent';
 export type ClinicianSubView = 'triage' | 'inspector' | 'titration' | 'alerts' | 'protocol';
 
 interface NavbarProps {
@@ -130,6 +130,17 @@ export const Navbar: React.FC<NavbarProps> = ({
                 }`}
               >
                 EHR & Prescriptions
+              </button>
+              <button
+                onClick={() => onSelectPatientSubView('consent')}
+                className={`whitespace-nowrap transition-colors hover:text-white px-2 py-1 xl:px-2.5 rounded-lg flex items-center gap-1.5 ${
+                  patientSubView === 'consent'
+                    ? 'text-emerald-300 font-semibold bg-[#13315c]/60 border-b-2 border-emerald-400'
+                    : 'text-slate-300 hover:bg-[#13315c]/30'
+                }`}
+              >
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <span>DPDP Consent & Privacy</span>
               </button>
             </>
           )}
@@ -304,6 +315,15 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               EHR & Rx
+            </button>
+            <button
+              onClick={() => onSelectPatientSubView('consent')}
+              className={`text-xs min-h-[40px] px-3.5 py-2 rounded-xl whitespace-nowrap font-medium transition-colors flex items-center justify-center gap-1.5 shrink-0 ${
+                patientSubView === 'consent' ? 'bg-[#134074] text-emerald-300 font-bold shadow-xs' : 'text-slate-300 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <span>DPDP Consent</span>
             </button>
           </>
         )}

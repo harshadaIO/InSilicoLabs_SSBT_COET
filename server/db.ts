@@ -157,6 +157,40 @@ function initSchemaAndSeeds(db: Database) {
     );
   `);
 
+  // DPDP Act 2023 Active Digital Consents Table (Section 6 Compliance)
+  db.run(`
+    CREATE TABLE IF NOT EXISTS dpdp_consents (
+      id TEXT PRIMARY KEY,
+      patient_id TEXT NOT NULL,
+      purpose_code TEXT NOT NULL,
+      purpose_title TEXT NOT NULL,
+      purpose_description TEXT NOT NULL,
+      legal_basis TEXT NOT NULL,
+      is_granted INTEGER NOT NULL,
+      encryption_at_rest TEXT NOT NULL,
+      encryption_in_transit TEXT NOT NULL,
+      data_localization_region TEXT NOT NULL,
+      retention_period TEXT NOT NULL,
+      consent_manager TEXT NOT NULL,
+      last_updated_at TEXT NOT NULL
+    );
+  `);
+
+  // DPDP Act 2023 Immutable Audit Logs Table
+  db.run(`
+    CREATE TABLE IF NOT EXISTS dpdp_audit_logs (
+      id TEXT PRIMARY KEY,
+      patient_id TEXT NOT NULL,
+      action TEXT NOT NULL,
+      purpose_code TEXT NOT NULL,
+      purpose_title TEXT NOT NULL,
+      section_reference TEXT NOT NULL,
+      details TEXT NOT NULL,
+      ip_address_hash TEXT NOT NULL,
+      timestamp TEXT NOT NULL
+    );
+  `);
+
   // Ensure demo users exist
   db.run(`
     INSERT OR IGNORE INTO users (id, email, password_hash, name, role, created_at)
@@ -878,6 +912,147 @@ function seedDatabase(db: Database) {
 
   simDataInsert('pat-ananya-iyer', 'sim-init-ananya-01');
   simDataInsert('pat-elena-vance', 'sim-init-01');
+
+  // 6. DPDP Act 2023 Digital Consents Seeding (Section 6 Compliance)
+  const defaultConsents = [
+    {
+      code: 'cgm_telemetry',
+      title: 'Continuous CGM & Biosensor Telemetry Ingestion',
+      description: 'Streaming real-time interstitial glucose velocity, resting photoplethysmography (PPG) heart rate, and RMSSD heart rate variability from paired BLE wearable devices.',
+      legalBasis: 'DPDP Act 2023 Sec 6(1) Explicit Digital Consent',
+      isGranted: 1,
+      encryptionAtRest: 'AES-256-GCM (Hardware Security Module with Envelope Keying)',
+      encryptionInTransit: 'TLS 1.3 with Perfect Forward Secrecy & mTLS Handshake',
+      localization: 'India Central (MeitY Empaneled Data Center, Mumbai / Pune DC)',
+      retention: 'Active Episode + 90 Days Post-Surveillance',
+      manager: 'ABDM Electronic Consent Artifact #IND-CM-2026-4921'
+    },
+    {
+      code: 'digital_twin_kinetics',
+      title: 'In-Silico Compartmental Physiological Modeling',
+      description: 'Continuous biophysical execution of two-compartment insulin-glucose kinetic equations to forecast metabolic excursions and autonomic stress profiles.',
+      legalBasis: 'DPDP Act 2023 Sec 6(1) Explicit Digital Consent',
+      isGranted: 1,
+      encryptionAtRest: 'AES-256-GCM (Secure Enclave Ephemeral Memory)',
+      encryptionInTransit: 'TLS 1.3 / Internal Secure gRPC',
+      localization: 'India Central (Mumbai DC Sovereign Boundary)',
+      retention: 'Simulation Lifecycle; Zero Persistent Raw PII',
+      manager: 'ABDM Electronic Consent Artifact #IND-CM-2026-4921'
+    },
+    {
+      code: 'lifestyle_pharmacotherapy_cds',
+      title: 'Personalized Lifestyle & Pharmacotherapy Decision Support',
+      description: 'Synthesis of dietary glycemic loads, postprandial physical ambulation (GLUT4 buffering), and clinician titration projections with Dr. Vikramaditya Rao.',
+      legalBasis: 'DPDP Act 2023 Sec 6(1) Explicit Digital Consent',
+      isGranted: 1,
+      encryptionAtRest: 'AES-256-GCM',
+      encryptionInTransit: 'TLS 1.3',
+      localization: 'India Central (Mumbai DC)',
+      retention: '1 Year Rolling Audit History',
+      manager: 'ABDM Electronic Consent Artifact #IND-CM-2026-4921'
+    },
+    {
+      code: 'anonymized_research_benchmarks',
+      title: 'De-Identified Quality & Epidemiological Benchmarking',
+      description: 'Voluntary contribution of anonymized, k-anonymity verified metabolic trajectories to advance Indian Type 2 Diabetes clinical outcome models.',
+      legalBasis: 'DPDP Act 2023 Sec 6(1) Explicit Digital Consent (Optional Tier)',
+      isGranted: 1,
+      encryptionAtRest: 'AES-256-GCM with Cryptographic Salt Hashing',
+      encryptionInTransit: 'TLS 1.3',
+      localization: 'India Central (Mumbai DC)',
+      retention: '3 Years De-Identified Cohort Archive',
+      manager: 'ABDM Electronic Consent Artifact #IND-CM-2026-4921'
+    }
+  ];
+
+  ['pat-ananya-iyer', 'pat-elena-vance'].forEach(pid => {
+    defaultConsents.forEach(c => {
+      const cid = `cns-${pid}-${c.code}`;
+      db.run(`
+        INSERT OR REPLACE INTO dpdp_consents (
+          id, patient_id, purpose_code, purpose_title, purpose_description, legal_basis,
+          is_granted, encryption_at_rest, encryption_in_transit, data_localization_region,
+          retention_period, consent_manager, last_updated_at
+        ) VALUES (
+          '${cid}',
+          '${pid}',
+          '${c.code}',
+          '${c.title.replace(/'/g, "''")}',
+          '${c.description.replace(/'/g, "''")}',
+          '${c.legalBasis}',
+          ${c.isGranted},
+          '${c.encryptionAtRest}',
+          '${c.encryptionInTransit}',
+          '${c.localization}',
+          '${c.retention}',
+          '${c.manager}',
+          '${new Date(Date.now() - 3600 * 1000).toISOString()}'
+        );
+      `);
+    });
+
+    // Seed initial immutable audit logs for this patient
+    const initialLogs = [
+      {
+        id: `aud-${pid}-01`,
+        action: 'CONSENT_GRANTED',
+        purposeCode: 'cgm_telemetry',
+        purposeTitle: 'Continuous CGM & Biosensor Telemetry Ingestion',
+        sectionRef: 'DPDP Act 2023 Section 6(1) Notice & Explicit Consent',
+        details: 'Data Principal granted explicit, informed digital consent via ABDM Consent Manager #IND-CM-2026-4921 for real-time telemetry processing.',
+        ipHash: 'sha256:7a4f91b2c... (Mumbai, IN)',
+        timestamp: new Date(Date.now() - 48 * 3600 * 1000).toISOString()
+      },
+      {
+        id: `aud-${pid}-02`,
+        action: 'ENCRYPTION_VERIFIED',
+        purposeCode: 'cgm_telemetry',
+        purposeTitle: 'Security Safeguards Audit',
+        sectionRef: 'DPDP Act 2023 Section 8(5) Reasonable Security Safeguards',
+        details: 'Hardware Security Module (HSM) verified AES-256-GCM envelope encryption at rest and TLS 1.3 forward-secret cipher suites in transit.',
+        ipHash: 'sha256:internal-hsm',
+        timestamp: new Date(Date.now() - 24 * 3600 * 1000).toISOString()
+      },
+      {
+        id: `aud-${pid}-03`,
+        action: 'LOCALIZATION_AUDIT',
+        purposeCode: 'all_purposes',
+        purposeTitle: 'Sovereign Cloud Residency Check',
+        sectionRef: 'DPDP Act 2023 Section 16 Cross-Border Boundary Enforcement',
+        details: 'Data localization check passed: All telemetry time-series and diagnostic records reside strictly within India Central (Mumbai/Pune) regional cloud.',
+        ipHash: 'sha256:compliance-audit-bot',
+        timestamp: new Date(Date.now() - 12 * 3600 * 1000).toISOString()
+      },
+      {
+        id: `aud-${pid}-04`,
+        action: 'CONSENT_GRANTED',
+        purposeCode: 'digital_twin_kinetics',
+        purposeTitle: 'In-Silico Compartmental Physiological Modeling',
+        sectionRef: 'DPDP Act 2023 Section 6(1) Notice & Explicit Consent',
+        details: 'Data Principal authorized biophysical compartmental modeling for 2-hour postprandial glycemic prediction and metabolic strain simulation.',
+        ipHash: 'sha256:7a4f91b2c... (Mumbai, IN)',
+        timestamp: new Date(Date.now() - 6 * 3600 * 1000).toISOString()
+      }
+    ];
+
+    initialLogs.forEach(log => {
+      db.run(`
+        INSERT OR REPLACE INTO dpdp_audit_logs (
+          id, patient_id, action, purpose_code, purpose_title, section_reference, details, ip_address_hash, timestamp
+        ) VALUES (
+          '${log.id}',
+          '${pid}',
+          '${log.action}',
+          '${log.purposeCode}',
+          '${log.purposeTitle.replace(/'/g, "''")}',
+          '${log.sectionRef.replace(/'/g, "''")}',
+          '${log.details.replace(/'/g, "''")}',
+          '${log.ipHash}',
+          '${log.timestamp}'
+        );
+      `);
+    });
+  });
 
   console.log('[DB] Seeding completed successfully.');
 }

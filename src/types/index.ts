@@ -143,3 +143,64 @@ export interface AlertLog {
   acknowledged_by?: string | null;
   timestamp: string;
 }
+
+export interface DpdpConsent {
+  id: string;
+  patient_id: string;
+  purpose_code: string;
+  purpose_title: string;
+  purpose_description: string;
+  legal_basis: string;
+  is_granted: boolean;
+  encryption_at_rest: string;
+  encryption_in_transit: string;
+  data_localization_region: string;
+  retention_period: string;
+  consent_manager: string;
+  last_updated_at: string;
+}
+
+export interface DpdpAuditLog {
+  id: string;
+  patient_id: string;
+  action: string;
+  purpose_code: string;
+  purpose_title: string;
+  section_reference: string;
+  details: string;
+  ip_address_hash: string;
+  timestamp: string;
+}
+
+export interface DpdpCompliancePayload {
+  dataPrincipal: {
+    id: string;
+    full_name: string;
+    synthea_id: string;
+    abha_id?: string;
+  };
+  complianceStatus: 'FULLY_COMPLIANT' | 'PARTIALLY_RESTRICTED' | 'CONSENT_WITHDRAWN';
+  statutoryAct: string;
+  regulatoryOversight: string;
+  consents: DpdpConsent[];
+  auditLogs: DpdpAuditLog[];
+  telemetrySecurity: {
+    encryptionAtRest: string;
+    encryptionInTransit: string;
+    keyRotationSchedule: string;
+    zeroPiiDeidentification: string;
+    hardwareSecurityBoundary: string;
+  };
+  dataLocalization: {
+    residencyStatus: string;
+    primaryRegion: string;
+    meityEmpanelment: string;
+    crossBorderTransfer: string;
+    jurisdiction: string;
+  };
+  consentManager: {
+    gateway: string;
+    artifactToken: string;
+    digitalSignature: string;
+  };
+}
