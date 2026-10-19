@@ -1,22 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import {
   ShieldCheck,
-  ShieldAlert,
   Lock,
   Server,
   FileCheck,
   RefreshCw,
-  Download,
   CheckCircle2,
   AlertTriangle,
-  FileText,
   KeyRound,
-  ExternalLink,
-  Info,
-  Clock,
-  ArrowRight,
-  X,
-  Printer
+  Clock
 } from 'lucide-react';
 import { PatientProfile, DpdpConsent, DpdpAuditLog, DpdpCompliancePayload } from '../types';
 
@@ -29,12 +21,16 @@ export const DpdpConsentAuditView: React.FC<DpdpConsentAuditViewProps> = ({ pati
   const [loading, setLoading] = useState<boolean>(true);
   const [togglingCode, setTogglingCode] = useState<string | null>(null);
   const [notification, setNotification] = useState<{ type: 'success' | 'warn'; message: string } | null>(null);
-  const [isCertificateModalOpen, setIsCertificateModalOpen] = useState<boolean>(false);
+
+  const patientId = patient?.id || 'pat-ananya-iyer';
+  const patientName = data?.dataPrincipal?.full_name || patient?.full_name || 'Patient Profile';
+  const patientSynthea = data?.dataPrincipal?.synthea_id || patient?.synthea_id || 'SYN-IND';
+  const patientAge = (data?.dataPrincipal as any)?.age || patient?.age || 45;
 
   const fetchConsentData = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`/api/dpdp/consent/${patient.id}`);
+      const res = await fetch(`/api/dpdp/consent/${patientId}`);
       if (!res.ok) throw new Error('Failed to fetch DPDP compliance status');
       const payload: DpdpCompliancePayload = await res.json();
       setData(payload);
@@ -47,7 +43,7 @@ export const DpdpConsentAuditView: React.FC<DpdpConsentAuditViewProps> = ({ pati
 
   useEffect(() => {
     fetchConsentData();
-  }, [patient.id]);
+  }, [patientId]);
 
   const handleToggleConsent = async (purposeCode: string, currentStatus: boolean) => {
     try {
@@ -57,7 +53,7 @@ export const DpdpConsentAuditView: React.FC<DpdpConsentAuditViewProps> = ({ pati
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          patientId: patient.id,
+          patientId,
           purposeCode,
           isGranted: newStatus
         })
@@ -106,11 +102,11 @@ export const DpdpConsentAuditView: React.FC<DpdpConsentAuditViewProps> = ({ pati
     }
   };
 
-  const abhaFormatted = patient.id.includes('ananya')
+  const abhaFormatted = data?.dataPrincipal?.abha_id || patient?.abha_id || (patientId.includes('ananya')
     ? '91-4921-3820-1194'
-    : patient.id.includes('rajesh')
+    : patientId.includes('rajesh')
     ? '91-5192-3401-8821'
-    : '91-8832-7719-4450';
+    : `91-${patientId.replace(/[^0-9]/g, '').padEnd(4, '0').slice(0, 4)}-3820-1194`);
 
   const allActive = data?.consents.every(c => c.is_granted);
   const anyActive = data?.consents.some(c => c.is_granted);
@@ -148,8 +144,8 @@ export const DpdpConsentAuditView: React.FC<DpdpConsentAuditViewProps> = ({ pati
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
               <div className="p-3 bg-[#13315c]/60 border border-[#134074] rounded-xl text-xs">
                 <span className="text-[#8da9c4] block text-[10px] uppercase font-bold">Data Principal (User)</span>
-                <strong className="text-white font-bold text-sm">{patient.full_name}</strong>
-                <span className="text-slate-400 font-mono block text-[11px]">{patient.synthea_id} · {patient.age}y</span>
+                <strong className="text-white font-bold text-sm">{patientName}</strong>
+                <span className="text-slate-400 font-mono block text-[11px]">{patientSynthea} · {patientAge}y</span>
               </div>
 
               <div className="p-3 bg-[#13315c]/60 border border-[#134074] rounded-xl text-xs">
@@ -169,17 +165,9 @@ export const DpdpConsentAuditView: React.FC<DpdpConsentAuditViewProps> = ({ pati
           {/* Action buttons */}
           <div className="flex flex-col sm:flex-row lg:flex-col gap-2.5 shrink-0 w-full sm:w-auto lg:w-64">
             <button
-              onClick={() => setIsCertificateModalOpen(true)}
-              className="min-h-[44px] px-4 py-2.5 text-xs font-bold text-[#0b2545] bg-white hover:bg-[#eef4ed] rounded-xl transition-all shadow-md flex items-center justify-center gap-2 w-full whitespace-nowrap"
-            >
-              <FileCheck className="w-4 h-4 text-[#134074]" />
-              <span>Export Section 6 Certificate</span>
-            </button>
-
-            <button
               onClick={fetchConsentData}
               disabled={loading}
-              className="min-h-[44px] px-4 py-2.5 text-xs font-semibold text-slate-200 bg-[#13315c]/80 hover:bg-[#13315c] border border-[#8da9c4]/30 rounded-xl transition-all flex items-center justify-center gap-2 w-full whitespace-nowrap"
+              className="min-h-[44px] px-4 py-2.5 text-xs font-semibold text-white bg-[#13315c] hover:bg-[#134074] border border-[#8da9c4]/30 rounded-xl transition-all flex items-center justify-center gap-2 w-full whitespace-nowrap shadow-sm"
             >
               <RefreshCw className={`w-3.5 h-3.5 text-[#8da9c4] ${loading ? 'animate-spin' : ''}`} />
               <span>Refresh Cryptographic Audit</span>
@@ -550,115 +538,6 @@ export const DpdpConsentAuditView: React.FC<DpdpConsentAuditViewProps> = ({ pati
           </table>
         </div>
       </div>
-
-      {/* 5. LEGAL CERTIFICATE MODAL */}
-      {isCertificateModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-[#0b2545]/75 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl shadow-2xl border border-[#8da9c4]/40 max-w-3xl w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150 flex flex-col max-h-[90vh]">
-            {/* Header */}
-            <div className="px-6 py-5 bg-[#0b2545] border-b border-[#13315c] text-white flex items-center justify-between shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#134074] border border-[#8da9c4]/30 flex items-center justify-center text-white shadow-inner">
-                  <ShieldCheck className="w-5 h-5 text-emerald-400" />
-                </div>
-                <div>
-                  <h3 className="text-base font-bold text-white">
-                    DPDP Act 2023 Digital Consent Certificate
-                  </h3>
-                  <div className="text-xs text-slate-300">
-                    Statutory Certification under Section 6 of Act No. 22 of 2023
-                  </div>
-                </div>
-              </div>
-
-              <button
-                onClick={() => setIsCertificateModalOpen(false)}
-                className="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-[#13315c] transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Certificate Body (Printable) */}
-            <div className="p-6 sm:p-8 space-y-6 overflow-y-auto bg-[#eef4ed]/20 text-xs text-slate-800 font-sans">
-              <div className="p-6 bg-white border-2 border-[#0b2545] rounded-2xl space-y-4 shadow-sm">
-                <div className="text-center pb-4 border-b border-slate-200">
-                  <div className="text-[11px] font-bold uppercase tracking-widest text-[#134074]">
-                    Government of India · Data Protection Board Framework
-                  </div>
-                  <h2 className="text-xl font-black text-[#0b2545] mt-1">
-                    CERTIFICATE OF INFORMED DIGITAL CONSENT
-                  </h2>
-                  <div className="text-xs font-mono text-slate-500 mt-1">
-                    Issued under the Digital Personal Data Protection Act, 2023 (Section 6)
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 text-xs">
-                  <div>
-                    <span className="text-slate-500 block uppercase font-bold text-[10px]">Data Principal</span>
-                    <strong className="text-sm font-bold text-[#0b2545]">{patient.full_name}</strong>
-                    <div className="font-mono text-slate-600">ABHA: {abhaFormatted}</div>
-                    <div className="font-mono text-slate-600">Synthea ID: #{patient.synthea_id}</div>
-                  </div>
-
-                  <div>
-                    <span className="text-slate-500 block uppercase font-bold text-[10px]">Data Fiduciary</span>
-                    <strong className="text-sm font-bold text-[#0b2545]">VitaTwin Clinical Engine</strong>
-                    <div className="text-slate-600">Hospital Endocrine Digital Twin Services</div>
-                    <div className="text-slate-600">Attending: Dr. Vikramaditya Rao, MD</div>
-                  </div>
-                </div>
-
-                {/* Cryptographic Proof */}
-                <div className="p-4 bg-[#eef4ed] border border-[#8da9c4]/40 rounded-xl space-y-2">
-                  <div className="font-bold text-[#0b2545] flex items-center justify-between">
-                    <span>Cryptographic Verification Signatures</span>
-                    <span className="text-[10px] font-mono text-emerald-700 bg-white px-2 py-0.5 rounded border border-emerald-300">
-                      VALID ELECTRONIC RECORD
-                    </span>
-                  </div>
-                  <div className="font-mono text-[11px] text-slate-700 break-all space-y-1">
-                    <div><strong>Encryption Spec:</strong> AES-256-GCM (Envelope keying) + TLS 1.3 mTLS</div>
-                    <div><strong>Data Residency:</strong> India Central (Mumbai/Pune Facility, Sovereign Residency)</div>
-                    <div><strong>Certificate Hash:</strong> {data?.consentManager.digitalSignature || 'SHA-256: 8f4c2b9a71e3d065842f11c79e62aa48d7123bf04509e86c02a7b8e5d314f109'}</div>
-                    <div><strong>Consent Gateway Token:</strong> {data?.consentManager.artifactToken || 'IND-CM-2026-4921-X99'}</div>
-                  </div>
-                </div>
-
-                {/* Statutory Attestation */}
-                <p className="text-[11px] text-slate-600 leading-relaxed italic">
-                  "This electronic artifact certifies that the Data Principal has received statutory notice under Section 5 and provided explicit, informed consent under Section 6(1) of the Digital Personal Data Protection Act, 2023. The Data Principal maintains the statutory right under Section 6(4) to withdraw consent at any time via the VitaTwin digital portal."
-                </p>
-
-                <div className="pt-4 border-t border-slate-200 flex items-center justify-between text-[11px] font-mono text-slate-500">
-                  <span>Certified Date: {new Date().toLocaleDateString()}</span>
-                  <span>Authority: Data Protection Board of India</span>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex items-center justify-end gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setIsCertificateModalOpen(false)}
-                  className="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50"
-                >
-                  Close
-                </button>
-                <button
-                  type="button"
-                  onClick={() => window.print()}
-                  className="px-4 py-2 text-xs font-bold text-white bg-[#134074] hover:bg-[#0b2545] rounded-xl flex items-center gap-1.5 shadow-sm"
-                >
-                  <Printer className="w-3.5 h-3.5 text-[#8da9c4]" />
-                  <span>Print / Save as PDF</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

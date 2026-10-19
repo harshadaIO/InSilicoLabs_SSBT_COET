@@ -14,9 +14,10 @@ import { ChallengeDetailsPage } from './pages/ChallengeDetailsPage';
 import { PatientDashboard } from './pages/PatientDashboard';
 import { DoctorDashboard } from './pages/DoctorDashboard';
 import { LoginModal } from './components/LoginModal';
+import { DpdpConsentModal } from './components/DpdpConsentModal';
 
 function AppContent() {
-  const { logout } = useAuth();
+  const { logout, patientProfile, user } = useAuth();
 
   // STATE 1: authRole strictly defaults to null on load (UNAUTHENTICATED PUBLIC WEBSITE)
   const [authRole, setAuthRole] = useState<AuthRole>(null);
@@ -28,10 +29,37 @@ function AppContent() {
 
   // Clinician patient focus
   const [selectedPatientId, setSelectedPatientId] = useState<string>('pat-ananya-iyer');
+  const [clinicianSelectedPatient, setClinicianSelectedPatient] = useState<any>(null);
+
+  // Sync clinician selected patient profile whenever selectedPatientId changes
+  useEffect(() => {
+    if (selectedPatientId) {
+      fetch(`/api/patient/profile/${selectedPatientId}`)
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data) setClinicianSelectedPatient(data);
+        })
+        .catch(err => console.error('Failed to fetch clinician selected patient:', err));
+    }
+  }, [selectedPatientId]);
 
   // Authentication Modal state
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalInitialRole, setAuthModalInitialRole] = useState<'patient' | 'doctor'>('patient');
+
+  // DPDP Act 2023 Compliance & Consent Modal state
+  const [isDpdpModalOpen, setIsDpdpModalOpen] = useState(false);
+
+  // Active patient for DPDP modal (strictly the currently authenticated Data Principal / Patient)
+  const activeModalPatient = authRole === 'patient'
+    ? (patientProfile || (user?.role === 'patient' ? {
+        id: user.id.startsWith('usr-') ? user.id.replace('usr-', 'pat-') : user.id,
+        full_name: user.name,
+        synthea_id: 'SYN-IND-4921',
+        age: 52,
+        gender: 'Female'
+      } as any : null))
+    : null;
 
   // Ensure clean unauthenticated initial state
   useEffect(() => {
@@ -80,6 +108,7 @@ function AppContent() {
         onSelectClinicianSubView={setClinicianSubView}
         onOpenAuthModal={handleOpenAuthModal}
         onSignOut={handleSignOut}
+        onOpenDpdpModal={() => setIsDpdpModalOpen(true)}
       />
 
       {/* Main Portal View Orchestrator */}
@@ -127,6 +156,15 @@ function AppContent() {
         initialRole={authModalInitialRole}
         onSuccess={handleLoginSuccess}
       />
+
+      {/* DPDP Act 2023 Compliance & Consent Audit Interactive Modal Overlay - Strictly for Authenticated Data Principal */}
+      {authRole === 'patient' && activeModalPatient && (
+        <DpdpConsentModal
+          isOpen={isDpdpModalOpen}
+          onClose={() => setIsDpdpModalOpen(false)}
+          patient={activeModalPatient}
+        />
+      )}
     </div>
   );
 }

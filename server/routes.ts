@@ -97,6 +97,10 @@ router.post('/auth/login', async (req: Request, res: Response) => {
     // Check demo shortcut or bcrypt verify
     const isDemoPassword = (email === 'ananya.iyer@example.com' && password === 'patient123') ||
                           (email === 'elena.vance@example.com' && password === 'patient123') ||
+                          (email === 'rajesh.sharma@example.com' && password === 'patient123') ||
+                          (email === 'siddharth.deshmukh@example.com' && password === 'patient123') ||
+                          (email === 'priya.nair@example.com' && password === 'patient123') ||
+                          (email === 'vikram.patel@example.com' && password === 'patient123') ||
                           (email === 'dr.vikramaditya.rao@hospital.org' && password === 'doctor123') ||
                           (email === 'dr.aris.thorne@hospital.org' && password === 'doctor123') ||
                           (email === 'dr.marcus.chen@hospital.org' && password === 'doctor123');
@@ -929,14 +933,145 @@ router.get('/challenge/stats', async (req: Request, res: Response) => {
 
 router.get('/dpdp/consent/:patientId?', async (req: Request, res: Response) => {
   try {
-    let patientId = req.params.patientId || 'pat-ananya-iyer';
-    if (patientId === 'pat-elena-vance') patientId = 'pat-ananya-iyer';
+    const rawPatientId = req.params.patientId || 'pat-ananya-iyer';
+    const patientId = rawPatientId === 'pat-elena-vance' ? 'pat-ananya-iyer' : rawPatientId;
 
     const db = await getDb();
     
-    // Fetch consents
-    const query = db.exec(`SELECT * FROM dpdp_consents WHERE patient_id = '${patientId.replace(/'/g, "''")}' OR patient_id = 'pat-ananya-iyer' ORDER BY purpose_code ASC`);
+    // 1. Fetch exact patient info from database
+    const pQuery = db.exec(`SELECT id, full_name, synthea_id, age, gender FROM patient_profiles WHERE id = '${patientId.replace(/'/g, "''")}' LIMIT 1`);
     
+    let patientInfo: any = {
+      id: patientId,
+      full_name: 'Ananya Iyer',
+      synthea_id: 'SYN-IND-4921',
+      age: 48,
+      gender: 'Female',
+      abha_id: '91-4921-3820-1194'
+    };
+
+    if (pQuery && pQuery.length > 0 && pQuery[0].values.length > 0) {
+      const pCols = pQuery[0].columns;
+      const pRow = pQuery[0].values[0];
+      const pData: any = {};
+      pCols.forEach((c, i) => { pData[c] = pRow[i]; });
+      
+      // Compute stable deterministic ABHA for this patient
+      const hash1 = Math.abs(pData.id.split('').reduce((acc: number, ch: string) => (acc * 31 + ch.charCodeAt(0)) | 0, 0) % 9000 + 1000);
+      const hash2 = Math.abs(pData.id.split('').reduce((acc: number, ch: string) => (acc * 17 + ch.charCodeAt(0)) | 0, 0) % 9000 + 1000);
+
+      patientInfo = {
+        id: pData.id,
+        full_name: pData.full_name,
+        synthea_id: pData.synthea_id,
+        age: pData.age || 45,
+        gender: pData.gender || 'Patient',
+        abha_id: `91-${hash1}-3820-${hash2}`
+      };
+    }
+
+    // 2. Fetch active consents for this patient
+    let query = db.exec(`SELECT * FROM dpdp_consents WHERE patient_id = '${patientId.replace(/'/g, "''")}' ORDER BY purpose_code ASC`);
+    
+    // Auto-seed consents if first time this patient is accessed
+    if (!query || query.length === 0 || query[0].values.length === 0) {
+      const defaultConsents = [
+        {
+          code: 'cgm_telemetry',
+          title: 'Continuous CGM & Biosensor Telemetry Ingestion',
+          description: `Streaming real-time interstitial glucose velocity, resting photoplethysmography (PPG) heart rate, and RMSSD heart rate variability for ${patientInfo.full_name}.`,
+          legalBasis: 'DPDP Act 2023 Sec 6(1) Explicit Digital Consent',
+          isGranted: 1,
+          encryptionAtRest: 'AES-256-GCM (Hardware Security Module with Envelope Keying)',
+          encryptionInTransit: 'TLS 1.3 with Perfect Forward Secrecy & mTLS Handshake',
+          localization: 'India Central (MeitY Empaneled Data Center, Mumbai / Pune DC)',
+          retention: 'Active Episode + 90 Days Post-Surveillance',
+          manager: `ABDM Electronic Consent Artifact #IND-CM-2026-${patientId.slice(-4)}`
+        },
+        {
+          code: 'digital_twin_kinetics',
+          title: 'In-Silico Compartmental Physiological Modeling',
+          description: `Continuous biophysical execution of two-compartment insulin-glucose kinetic equations to forecast metabolic excursions and autonomic stress for ${patientInfo.full_name}.`,
+          legalBasis: 'DPDP Act 2023 Sec 6(1) Explicit Digital Consent',
+          isGranted: 1,
+          encryptionAtRest: 'AES-256-GCM (Secure Enclave Ephemeral Memory)',
+          encryptionInTransit: 'TLS 1.3 / Internal Secure gRPC',
+          localization: 'India Central (Mumbai DC Sovereign Boundary)',
+          retention: 'Simulation Lifecycle; Zero Persistent Raw PII',
+          manager: `ABDM Electronic Consent Artifact #IND-CM-2026-${patientId.slice(-4)}`
+        },
+        {
+          code: 'lifestyle_pharmacotherapy_cds',
+          title: 'Personalized Lifestyle & Pharmacotherapy Decision Support',
+          description: `Synthesis of dietary glycemic loads, postprandial physical ambulation (GLUT4 buffering), and clinician titration projections with Dr. Vikramaditya Rao for ${patientInfo.full_name}.`,
+          legalBasis: 'DPDP Act 2023 Sec 6(1) Explicit Digital Consent',
+          isGranted: 1,
+          encryptionAtRest: 'AES-256-GCM',
+          encryptionInTransit: 'TLS 1.3',
+          localization: 'India Central (Mumbai DC)',
+          retention: '1 Year Rolling Audit History',
+          manager: `ABDM Electronic Consent Artifact #IND-CM-2026-${patientId.slice(-4)}`
+        },
+        {
+          code: 'anonymized_research_benchmarks',
+          title: 'De-Identified Quality & Epidemiological Benchmarking',
+          description: 'Voluntary contribution of anonymized, k-anonymity verified metabolic trajectories to advance Indian Type 2 Diabetes clinical outcome models.',
+          legalBasis: 'DPDP Act 2023 Sec 6(1) Explicit Digital Consent (Optional Tier)',
+          isGranted: 1,
+          encryptionAtRest: 'AES-256-GCM with Cryptographic Salt Hashing',
+          encryptionInTransit: 'TLS 1.3',
+          localization: 'India Central (Mumbai DC)',
+          retention: '3 Years De-Identified Cohort Archive',
+          manager: `ABDM Electronic Consent Artifact #IND-CM-2026-${patientId.slice(-4)}`
+        }
+      ];
+
+      defaultConsents.forEach(c => {
+        const cid = `cns-${patientId}-${c.code}`;
+        db.run(`
+          INSERT OR REPLACE INTO dpdp_consents (
+            id, patient_id, purpose_code, purpose_title, purpose_description, legal_basis,
+            is_granted, encryption_at_rest, encryption_in_transit, data_localization_region,
+            retention_period, consent_manager, last_updated_at
+          ) VALUES (
+            '${cid}',
+            '${patientId.replace(/'/g, "''")}',
+            '${c.code}',
+            '${c.title.replace(/'/g, "''")}',
+            '${c.description.replace(/'/g, "''")}',
+            '${c.legalBasis}',
+            ${c.isGranted},
+            '${c.encryptionAtRest}',
+            '${c.encryptionInTransit}',
+            '${c.localization}',
+            '${c.retention}',
+            '${c.manager}',
+            '${new Date().toISOString()}'
+          );
+        `);
+      });
+
+      // Insert baseline audit log
+      db.run(`
+        INSERT OR REPLACE INTO dpdp_audit_logs (
+          id, patient_id, action, purpose_code, purpose_title, section_reference, details, ip_address_hash, timestamp
+        ) VALUES (
+          'aud-${patientId}-init',
+          '${patientId.replace(/'/g, "''")}',
+          'CONSENT_GRANTED',
+          'cgm_telemetry',
+          'Continuous CGM & Biosensor Telemetry Ingestion',
+          'DPDP Act 2023 Section 6(1) Notice & Explicit Consent',
+          'Data Principal ${patientInfo.full_name} granted explicit digital consent via ABDM Consent Manager.',
+          'sha256:current-session (Mumbai, IN)',
+          '${new Date().toISOString()}'
+        );
+      `);
+
+      saveDb();
+      query = db.exec(`SELECT * FROM dpdp_consents WHERE patient_id = '${patientId.replace(/'/g, "''")}' ORDER BY purpose_code ASC`);
+    }
+
     let consents: any[] = [];
     if (query && query.length > 0) {
       const cols = query[0].columns;
@@ -948,8 +1083,8 @@ router.get('/dpdp/consent/:patientId?', async (req: Request, res: Response) => {
       });
     }
 
-    // Fetch audit logs
-    const auditQuery = db.exec(`SELECT * FROM dpdp_audit_logs WHERE patient_id = '${patientId.replace(/'/g, "''")}' OR patient_id = 'pat-ananya-iyer' ORDER BY timestamp DESC LIMIT 30`);
+    // 3. Fetch audit logs specifically for this patient
+    const auditQuery = db.exec(`SELECT * FROM dpdp_audit_logs WHERE patient_id = '${patientId.replace(/'/g, "''")}' ORDER BY timestamp DESC LIMIT 30`);
     let auditLogs: any[] = [];
     if (auditQuery && auditQuery.length > 0) {
       const aCols = auditQuery[0].columns;
@@ -958,24 +1093,6 @@ router.get('/dpdp/consent/:patientId?', async (req: Request, res: Response) => {
         aCols.forEach((c, i) => { item[c] = row[i]; });
         return item;
       });
-    }
-
-    // Fetch patient info
-    const pQuery = db.exec(`SELECT id, full_name, synthea_id FROM patient_profiles WHERE id = '${patientId.replace(/'/g, "''")}' OR id = 'pat-ananya-iyer' LIMIT 1`);
-    let patientInfo = {
-      id: patientId,
-      full_name: 'Ananya Iyer',
-      synthea_id: 'SYN-IND-4921',
-      abha_id: '91-4921-3820-1194'
-    };
-    if (pQuery && pQuery.length > 0 && pQuery[0].values.length > 0) {
-      const pCols = pQuery[0].columns;
-      const pRow = pQuery[0].values[0];
-      const pData: any = {};
-      pCols.forEach((c, i) => { pData[c] = pRow[i]; });
-      patientInfo.id = pData.id;
-      patientInfo.full_name = pData.full_name;
-      patientInfo.synthea_id = pData.synthea_id;
     }
 
     const allGranted = consents.length > 0 && consents.every(c => c.is_granted);
@@ -1004,7 +1121,7 @@ router.get('/dpdp/consent/:patientId?', async (req: Request, res: Response) => {
       },
       consentManager: {
         gateway: 'ABDM Electronic Consent Manager',
-        artifactToken: 'IND-CM-2026-4921-X99',
+        artifactToken: `IND-CM-2026-${patientId.slice(-4)}-X99`,
         digitalSignature: 'SHA-256: 8f4c2b9a71e3d065842f11c79e62aa48d7123bf04509e86c02a7b8e5d314f109'
       }
     });
@@ -1025,11 +1142,11 @@ router.post('/dpdp/consent/toggle', async (req: Request, res: Response) => {
     const updatedTimestamp = new Date().toISOString();
     const numericGranted = isGranted ? 1 : 0;
 
-    // Update consent record
+    // Update consent record for specifically this patient
     db.run(`
       UPDATE dpdp_consents 
       SET is_granted = ${numericGranted}, last_updated_at = '${updatedTimestamp}'
-      WHERE (patient_id = '${patientId.replace(/'/g, "''")}' OR patient_id = 'pat-ananya-iyer')
+      WHERE patient_id = '${patientId.replace(/'/g, "''")}'
         AND purpose_code = '${purposeCode.replace(/'/g, "''")}';
     `);
 

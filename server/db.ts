@@ -212,6 +212,51 @@ function initSchemaAndSeeds(db: Database) {
       'doctor',
       '2026-01-01T00:00:00.000Z'
     );
+
+    INSERT OR IGNORE INTO users (id, email, password_hash, name, role, created_at)
+    VALUES (
+      'usr-ananya-iyer',
+      'ananya.iyer@example.com',
+      '$2a$10$w09ZkC2h.ZfP9sP9G5y3EOC0GeqeXk4bUqMcmrJ7.77W1j.sYgq0m',
+      'Ananya Iyer',
+      'patient',
+      '2026-01-01T00:00:00.000Z'
+    );
+
+    INSERT OR IGNORE INTO users (id, email, password_hash, name, role, created_at)
+    VALUES (
+      'usr-rajesh-sharma',
+      'rajesh.sharma@example.com',
+      '$2a$10$w09ZkC2h.ZfP9sP9G5y3EOC0GeqeXk4bUqMcmrJ7.77W1j.sYgq0m',
+      'Rajesh Sharma',
+      'patient',
+      '2026-01-01T00:00:00.000Z'
+    );
+
+    INSERT OR IGNORE INTO users (id, email, password_hash, name, role, created_at)
+    VALUES (
+      'usr-siddharth-deshmukh',
+      'siddharth.deshmukh@example.com',
+      '$2a$10$w09ZkC2h.ZfP9sP9G5y3EOC0GeqeXk4bUqMcmrJ7.77W1j.sYgq0m',
+      'Siddharth Deshmukh',
+      'patient',
+      '2026-01-01T00:00:00.000Z'
+    );
+
+    INSERT OR IGNORE INTO users (id, email, password_hash, name, role, created_at)
+    VALUES (
+      'usr-priya-nair',
+      'priya.nair@example.com',
+      '$2a$10$w09ZkC2h.ZfP9sP9G5y3EOC0GeqeXk4bUqMcmrJ7.77W1j.sYgq0m',
+      'Priya Nair',
+      'patient',
+      '2026-01-01T00:00:00.000Z'
+    );
+
+    UPDATE patient_profiles SET user_id = 'usr-rajesh-sharma' WHERE id = 'pat-rajesh-sharma' AND (user_id IS NULL OR user_id = '');
+    UPDATE patient_profiles SET user_id = 'usr-siddharth-deshmukh' WHERE id = 'pat-siddharth-deshmukh' AND (user_id IS NULL OR user_id = '');
+    UPDATE patient_profiles SET user_id = 'usr-priya-nair' WHERE id = 'pat-priya-nair' AND (user_id IS NULL OR user_id = '');
+    UPDATE patient_profiles SET user_id = 'usr-vikram-patel' WHERE id = 'pat-vikram-patel' AND (user_id IS NULL OR user_id = '');
   `);
 
   // Check if Indian Healthcare & Endocrinology cohort data exists
@@ -280,6 +325,46 @@ function seedDatabase(db: Database) {
       '${doctorHash}',
       'Dr. Vikramaditya Rao, MD (Endocrinology)',
       'doctor',
+      '${dateStr}'
+    );
+
+    INSERT OR REPLACE INTO users (id, email, password_hash, name, role, created_at)
+    VALUES (
+      'usr-rajesh-sharma',
+      'rajesh.sharma@example.com',
+      '${patientHash}',
+      'Rajesh Sharma',
+      'patient',
+      '${dateStr}'
+    );
+
+    INSERT OR REPLACE INTO users (id, email, password_hash, name, role, created_at)
+    VALUES (
+      'usr-siddharth-deshmukh',
+      'siddharth.deshmukh@example.com',
+      '${patientHash}',
+      'Siddharth Deshmukh',
+      'patient',
+      '${dateStr}'
+    );
+
+    INSERT OR REPLACE INTO users (id, email, password_hash, name, role, created_at)
+    VALUES (
+      'usr-priya-nair',
+      'priya.nair@example.com',
+      '${patientHash}',
+      'Priya Nair',
+      'patient',
+      '${dateStr}'
+    );
+
+    INSERT OR REPLACE INTO users (id, email, password_hash, name, role, created_at)
+    VALUES (
+      'usr-vikram-patel',
+      'vikram.patel@example.com',
+      '${patientHash}',
+      'Vikram Patel',
+      'patient',
       '${dateStr}'
     );
   `);
@@ -359,7 +444,7 @@ function seedDatabase(db: Database) {
     },
     {
       id: 'pat-rajesh-sharma',
-      userId: null,
+      userId: 'usr-rajesh-sharma',
       syntheaId: 'SYN-IND-5192',
       fullName: 'Rajesh Sharma',
       age: 58,
@@ -430,7 +515,7 @@ function seedDatabase(db: Database) {
     },
     {
       id: 'pat-siddharth-deshmukh',
-      userId: null,
+      userId: 'usr-siddharth-deshmukh',
       syntheaId: 'SYN-IND-8832',
       fullName: 'Siddharth Deshmukh',
       age: 61,
@@ -502,7 +587,7 @@ function seedDatabase(db: Database) {
     },
     {
       id: 'pat-priya-nair',
-      userId: null,
+      userId: 'usr-priya-nair',
       syntheaId: 'SYN-IND-1094',
       fullName: 'Priya Nair',
       age: 46,
@@ -572,7 +657,7 @@ function seedDatabase(db: Database) {
     },
     {
       id: 'pat-vikram-patel',
-      userId: null,
+      userId: 'usr-vikram-patel',
       syntheaId: 'SYN-IND-6102',
       fullName: 'Vikram Patel',
       age: 44,

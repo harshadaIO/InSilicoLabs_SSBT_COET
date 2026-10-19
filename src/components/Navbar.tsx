@@ -1,5 +1,6 @@
 import React from 'react';
 import { Activity, LogOut, ShieldCheck, Stethoscope, User } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export type AuthRole = 'patient' | 'clinician' | null;
 export type PublicView = 'overview' | 'challenge';
@@ -16,6 +17,7 @@ interface NavbarProps {
   onSelectClinicianSubView: (subView: ClinicianSubView) => void;
   onOpenAuthModal: (role?: 'patient' | 'doctor') => void;
   onSignOut: () => void;
+  onOpenDpdpModal: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -27,8 +29,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   clinicianSubView,
   onSelectClinicianSubView,
   onOpenAuthModal,
-  onSignOut
+  onSignOut,
+  onOpenDpdpModal
 }) => {
+  const { user, patientProfile } = useAuth();
   const handleLogoClick = () => {
     if (authRole === 'patient') {
       onSelectPatientSubView('twin');
@@ -132,12 +136,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                 EHR & Prescriptions
               </button>
               <button
-                onClick={() => onSelectPatientSubView('consent')}
-                className={`whitespace-nowrap transition-colors hover:text-white px-2 py-1 xl:px-2.5 rounded-lg flex items-center gap-1.5 ${
-                  patientSubView === 'consent'
-                    ? 'text-emerald-300 font-semibold bg-[#13315c]/60 border-b-2 border-emerald-400'
-                    : 'text-slate-300 hover:bg-[#13315c]/30'
-                }`}
+                onClick={onOpenDpdpModal}
+                className="whitespace-nowrap transition-colors hover:text-white px-2 py-1 xl:px-2.5 rounded-lg flex items-center gap-1.5 text-emerald-300 hover:bg-[#13315c]/60 font-semibold"
+                title="Open DPDP Act 2023 Compliance & Consent Audit Modal"
               >
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                 <span>DPDP Consent & Privacy</span>
@@ -221,8 +222,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <User className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                 <span className="text-white font-medium truncate block">
                   <span className="hidden xl:inline">Patient Portal · </span>
-                  <span className="hidden sm:inline">Ananya Iyer</span>
-                  <span className="sm:hidden">Ananya</span>
+                  <span className="hidden sm:inline">{patientProfile?.full_name || user?.name || 'Patient'}</span>
+                  <span className="sm:hidden">{patientProfile?.full_name?.split(' ')[0] || user?.name?.split(' ')[0] || 'Patient'}</span>
                 </span>
               </div>
               <button
@@ -317,10 +318,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               EHR & Rx
             </button>
             <button
-              onClick={() => onSelectPatientSubView('consent')}
-              className={`text-xs min-h-[40px] px-3.5 py-2 rounded-xl whitespace-nowrap font-medium transition-colors flex items-center justify-center gap-1.5 shrink-0 ${
-                patientSubView === 'consent' ? 'bg-[#134074] text-emerald-300 font-bold shadow-xs' : 'text-slate-300 hover:text-white hover:bg-white/5'
-              }`}
+              onClick={onOpenDpdpModal}
+              className="text-xs min-h-[40px] px-3.5 py-2 rounded-xl whitespace-nowrap font-medium transition-colors flex items-center justify-center gap-1.5 shrink-0 text-emerald-300 bg-emerald-950/50 hover:bg-emerald-900/60 border border-emerald-500/30"
+              title="Open DPDP Act 2023 Compliance & Consent Audit Modal"
             >
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
               <span>DPDP Consent</span>

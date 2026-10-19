@@ -5,6 +5,7 @@ import { DigitalTwinVisual } from '../components/DigitalTwinVisual';
 import { T2DMParameterStreamCards } from '../components/T2DMParameterStreamCards';
 import { EhrDetailModal } from '../components/EhrDetailModal';
 import { RiskBadge } from '../components/RiskBadge';
+import { DpdpConsentAuditView } from '../components/DpdpConsentAuditView';
 import {
   Activity,
   Heart,
@@ -34,8 +35,8 @@ import {
 } from 'recharts';
 
 interface PatientDashboardProps {
-  activeSubView?: 'twin' | 'simulator' | 'wearables' | 'ehr';
-  onSelectSubView?: (subView: 'twin' | 'simulator' | 'wearables' | 'ehr') => void;
+  activeSubView?: 'twin' | 'simulator' | 'wearables' | 'ehr' | 'consent';
+  onSelectSubView?: (subView: 'twin' | 'simulator' | 'wearables' | 'ehr' | 'consent') => void;
 }
 
 export const PatientDashboard: React.FC<PatientDashboardProps> = ({
@@ -45,7 +46,7 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
   const { user, patientProfile, refreshProfile } = useAuth();
 
   const [profile, setProfile] = useState<PatientProfile | null>(patientProfile);
-  const [internalSubView, setInternalSubView] = useState<'twin' | 'simulator' | 'wearables' | 'ehr'>(activeSubView);
+  const [internalSubView, setInternalSubView] = useState<'twin' | 'simulator' | 'wearables' | 'ehr' | 'consent'>(activeSubView);
 
   useEffect(() => {
     if (activeSubView) {
@@ -54,7 +55,7 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
   }, [activeSubView]);
 
   const currentSubView = activeSubView || internalSubView;
-  const handleSelectSubView = (sv: 'twin' | 'simulator' | 'wearables' | 'ehr') => {
+  const handleSelectSubView = (sv: 'twin' | 'simulator' | 'wearables' | 'ehr' | 'consent') => {
     setInternalSubView(sv);
     if (onSelectSubView) onSelectSubView(sv);
   };
@@ -980,6 +981,11 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
           </div>
         )}
         </>
+        )}
+
+        {/* 3. DPDP Act 2023 Consent & Compliance View */}
+        {currentSubView === 'consent' && profile && (
+          <DpdpConsentAuditView patient={profile} />
         )}
 
         {/* Synthea EHR Modal */}

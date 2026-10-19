@@ -67,6 +67,20 @@ export const LoginModal: React.FC<LoginModalProps> = ({
     }
   };
 
+  const handleRajeshInstantLogin = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await login('rajesh.sharma@example.com', 'patient123');
+      onSuccess('patient');
+      onClose();
+    } catch (err: any) {
+      setError(err?.message || 'Login failed');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleDoctorInstantLogin = async () => {
     setIsLoading(true);
     setError(null);
@@ -223,6 +237,21 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                 </div>
                 <span className="text-[10px] text-[#8da9c4] font-mono group-hover:text-white transition-colors">
                   #SYN-IND-4921 →
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleRajeshInstantLogin}
+                disabled={isLoading}
+                className="w-full py-2.5 px-3.5 bg-[#13315c] hover:bg-[#134074] border border-[#8da9c4]/40 rounded-xl text-xs font-semibold text-white transition-all flex items-center justify-between group shadow-sm"
+              >
+                <div className="flex items-center gap-2">
+                  <UserCheck className="w-4 h-4 text-[#8da9c4]" />
+                  <span>1-Click Patient Login (Rajesh Sharma)</span>
+                </div>
+                <span className="text-[10px] text-[#8da9c4] font-mono group-hover:text-white transition-colors">
+                  #SYN-IND-5192 →
                 </span>
               </button>
 
