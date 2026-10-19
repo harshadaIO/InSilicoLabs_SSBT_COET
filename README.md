@@ -1,13 +1,25 @@
-# VitaTwin - AI-Powered Patient Digital Twin & Predictive Simulation Engine
+# VitaTwin: AI-Powered Patient Digital Twin & Predictive Simulation Engine
 
-VitaTwin is a full-stack clinical digital twin platform that unites static Electronic Health Record (EHR) diagnostic baselines with dynamic continuous wearable biometric streams (CGM glucose, PPG heart rate, sleep architecture). Powered by advanced predictive modeling and compartmental physiological kinetics, it simulates forward postprandial glucose curves and cardiovascular strain before clinical symptoms occur.
+> **Next-generation clinical digital twin platform uniting static EHR diagnostic profiles with high-frequency wearable biometric streams for proactive metabolic and cardiovascular care[cite: 3].**
+
+---
+
+## Team & Submission Details
+* **Team Name:** InSilico Labs
+* **College / Incubator:** SSBT's COET (Shrama Sadhana Bombay Trust's College of Engineering and Technology)
+* **Team Leader Name:** Harshada Ravindra Mahajan
+* **Contact Number:** 8010459735
+* **Email ID:** mahajanharshada2006@gmail.com
+* **Public GitHub Repository:** https://github.com/harshadaIO/InSilicoLabs_SSBT_COET.git
+* **Live Application:** https://vitatwin.onrender.com
+* **Open-Source License:** Distributed under the **MIT License**.
 
 ---
 
 ## 1. Core Architecture & Features
 
 ### A. Multimodal Data Fusion Pipeline
-- **Static EHR Layer**: Modeled on Synthea / MIMIC-IV FHIR schemas containing demographics, chronic diagnoses (ICD-10 / SNOMED-CT), active medications (RxNorm), and baseline laboratory diagnostic panels (HbA1c, eGFR, fasting blood sugar, lipid panel, baseline BP).
+- **Static EHR Layer**: Modeled on Synthea / MIMIC-IV FHIR schemas containing demographics, chronic diagnoses (ICD-10 / SNOMED-CT), active medications (RxNorm), and baseline laboratory diagnostic panels (HbA1c, eGFR, fasting blood sugar, lipid panel, baseline BP)[cite: 3].
 - **Dynamic Wearable Telemetry**: Ingests high-frequency time-series data modeling Continuous Glucose Monitors (CGM mg/dL), heart rate (bpm), HRV (RMSSD ms), sleep stages (Deep, REM, Light, Awake), and step count.
 - **[Sync Wearable Data]**: Live endpoint (`POST /api/wearables/sync`) that generates and appends fresh synthetic time-series sensor points to the database with immediate chart animation.
 
@@ -27,7 +39,7 @@ VitaTwin is a full-stack clinical digital twin platform that unites static Elect
 - **Interactive Action Handlers**: **[Acknowledge Alert]** and **[Adjust Treatment Protocol]** with instant database updates.
 
 ### D. Regulatory Sandbox Compliance
-- **DPDP Act 2023**: Operates within a synthetic anonymized sandbox. Zero real-world PII stored.
+- **DPDP Act 2023**: Operates within a synthetic anonymized sandbox with Data Principal consent management and regional localization architecture[cite: 3].
 - **HIPAA Safe Harbor**: Compliant with 45 CFR § 164.514 de-identification standards.
 
 ---
@@ -36,8 +48,8 @@ VitaTwin is a full-stack clinical digital twin platform that unites static Elect
 
 | Persona | Email | Password | Role & Features |
 |---|---|---|---|
-| **Patient: Elena Vance** | `elena.vance@example.com` | `patient123` | 52y T2D, CGM telemetry, What-If simulator |
-| **Clinician: Dr. Marcus Chen, MD** | `dr.marcus.chen@hospital.org` | `doctor123` | Cohort risk stratification, alert surveillance, treatment adjustments |
+| **Patient: Ananya Iyer** | `ananya.iyer@example.com` | `patient123` | 52y T2D, CGM telemetry, What-If simulator |
+| **Clinician: Dr. Vikramaditya Rao, MD** | `dr.vikramaditya.rao@example.com` | `doctor123` | Cohort risk stratification, alert surveillance, treatment adjustments[cite: 3] |
 
 ---
 
@@ -51,19 +63,14 @@ VitaTwin is a full-stack clinical digital twin platform that unites static Elect
 
 ---
 
-## 4. Local Installation & Development
+## 4. Repository Structure & Documentation
 
-```bash
-# 1. Install dependencies
-npm install
-
-# 2. Environment Variables
-cp .env.example .env
-
-# 3. Start Full-Stack Dev Server (Port 3000)
-npm run dev
-
-# 4. Production Build
-npm run build
-npm start
-```
+```text
+InSilicoLabs_SSBT_COET/
+├── server/                 # Express backend, Gemini AI integration, and clinical titration logic
+├── client/                 # React frontend, patient/clinician portals, and simulation charts
+├── docs/                   # Supporting evaluation documentation
+│   ├── architecture-diagram.pdf  # Comprehensive multi-organ in-silico workflow diagram
+│   └── project-presentation.pdf  # Project presentation deck, clinical outcomes, and metrics
+├── package.json            # Project dependencies and build scripts
+└── README.md               # Elite project documentation
