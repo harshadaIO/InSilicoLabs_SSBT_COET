@@ -48,8 +48,8 @@
 
 | Persona | Email | Password | Role & Features |
 |---|---|---|---|
-| **Patient: Ananya Iyer** | `ananya.iyer@example.com` | `patient123` | 52y T2D, CGM telemetry, What-If simulator |
-| **Clinician: Dr. Vikramaditya Rao, MD** | `dr.vikramaditya.rao@example.com` | `doctor123` | Cohort risk stratification, alert surveillance, treatment adjustments[cite: 3] |
+| **Patient:Ananya Iyer** | `ananya.iyer@example.com` | `patient123` | 52y T2D, CGM telemetry, What-If simulator |
+| **Clinician:Dr. Vikramaditya Rao, MD** | `dr.vikramaditya.rao@example.com` | `doctor123` | Cohort risk stratification, alert surveillance, treatment adjustments[cite: 3] |
 
 ---
 
