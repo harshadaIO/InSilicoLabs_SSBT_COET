@@ -12,7 +12,7 @@
 - **Email ID:** mahajanharshada2006@gmail.com
 - **Public GitHub Repository:** [https://github.com/mahajanharshada2006/InSilicoLabs_SSBT_COET](https://github.com/harshadaIO/mahajanharshada2006_SSBT_COET.git)
 - **Live Application:** https://vitatwin.onrender.com
-- **Demo & Walkthrough Video:** [YouTube Video Demonstration Link]([https://youtu.be/YOUR_YOUTUBE_VIDEO_ID_HERE](https://youtu.be/NE3AgYQs_iY?is=NXr-VwREQ0lLodXJ))
+- **Demo & Walkthrough Video:** [[YouTube Video Demonstration Link]([https://youtu.be/YOUR_YOUTUBE_VIDEO_ID_HERE]](https://youtu.be/NE3AgYQs_iY?is=NXr-VwREQ0lLodXJ)(https://youtu.be/NE3AgYQs_iY?is=NXr-VwREQ0lLodXJ))
 - **Open-Source License:** Distributed under the **MIT License**
 
 ---
