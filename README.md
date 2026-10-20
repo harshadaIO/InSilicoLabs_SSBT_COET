@@ -5,26 +5,30 @@
 ---
 
 ## Team & Submission Details
-* **Team Name:** mahajanharshada2006
-* **College / Incubator:** SSBT's College of Engineering and Technology Jalgaon
-* **Team Leader Name:** Harshada Ravindra Mahajan
-* **Contact Number:** 8010459735
-* **Email ID:** mahajanharshada2006@gmail.com
-* **Public GitHub Repository:** https://github.com/harshadaIO/InSilicoLabs_SSBT_COET.git
-* **Live Application:** https://vitatwin.onrender.com
-* **Open-Source License:** Distributed under the **MIT License**
-* **Evaluation Documents:**
-* **[Architecture Diagram PDF](docs/architecture-diagram.pdf)**
-* **[Project Presentation PDF](docs/project-presentation.pdf)**
+- **Team Name / ID:** mahajanharshada2006
+- **College / Incubator:** SSBT's College of Engineering and Technology Jalgaon
+- **Team Leader Name:** Harshada Ravindra Mahajan
+- **Contact Number:** 8010459735
+- **Email ID:** mahajanharshada2006@gmail.com
+- **Public GitHub Repository:** https://github.com/mahajanharshada2006/InSilicoLabs_SSBT_COET
+- **Live Application:** https://vitatwin.onrender.com
+- **Demo & Walkthrough Video:** [YouTube Video Demonstration Link](https://youtu.be/YOUR_YOUTUBE_VIDEO_ID_HERE)
+- **Open-Source License:** Distributed under the **MIT License**
 
 ---
 
-## 1. Core Architecture & Features
+## 1. Problem Statement & Healthcare Use Case
+- **Problem Statement:** Traditional management of Type 2 Diabetes Mellitus (T2DM) relies heavily on retrospective, 3-month HbA1c laboratory samples. This reactive model leaves clinicians completely blind to daily glycemic volatility, postprandial glucose excursions, and cumulative cardiorenal strain between episodic clinical visits.
+- **Healthcare Use Case:** VitaTwin bridges the gap between static diagnostics and real-world physiology by building an in-silico patient digital twin. It empowers patients with a "What-If" lifestyle simulator to forecast glucose trends and equips clinicians with real-time anomaly alerts and a pharmacotherapy titration simulator to optimize outcomes safely.
+
+---
+
+## 2. Core Architecture & Features
 
 ### A. Multimodal Data Fusion Pipeline
 - **Static EHR Layer**: Modeled on Synthea / MIMIC-IV FHIR schemas containing demographics, chronic diagnoses (ICD-10 / SNOMED-CT), active medications (RxNorm), and baseline laboratory diagnostic panels (HbA1c, eGFR, fasting blood sugar, lipid panel, baseline BP)[cite: 3].
 - **Dynamic Wearable Telemetry**: Ingests high-frequency time-series data modeling Continuous Glucose Monitors (CGM mg/dL), heart rate (bpm), HRV (RMSSD ms), sleep stages (Deep, REM, Light, Awake), and step count.
-- **[Sync Wearable Data]**: Live endpoint (`POST /api/wearables/sync`) that generates and appends fresh synthetic time-series sensor points to the database with immediate chart animation.
+- **Live Sync Endpoint**: Live endpoint (`POST /api/wearables/sync`) that generates and appends fresh synthetic time-series sensor points to the database with immediate chart animation.
 
 ### B. "What-If" Predictive Scenario Simulator
 - Enables patients and clinicians to formulate lifestyle and dietary perturbations:
@@ -47,32 +51,31 @@
 
 ---
 
-## 2. Pre-Seeded Clinical Profiles
+## 3. Pre-Seeded Clinical Profiles
 
 | Persona | Email | Password | Role & Features |
 |---|---|---|---|
-| **Patient:Ananya Iyer** | `ananya.iyer@example.com` | `patient123` | 52y T2D, CGM telemetry, What-If simulator |
-| **Clinician:Dr. Vikramaditya Rao, MD** | `dr.vikramaditya.rao@example.com` | `doctor123` | Cohort risk stratification, alert surveillance, treatment adjustments[cite: 3] |
+| **Patient: Ananya Iyer** | `ananya.iyer@example.com` | `patient123` | 52y T2D, CGM telemetry, What-If simulator |
+| **Clinician: Dr. Vikramaditya Rao, MD** | `dr.vikramaditya.rao@example.com` | `doctor123` | Cohort risk stratification, alert surveillance, treatment adjustments[cite: 3] |
 
 ---
 
-## 3. Evaluation Documents
-- **[Architecture Diagram PDF](docs/architecture-diagram.pdf)**
-- **[Project Presentation PDF](docs/project-presentation.pdf)**
+## 4. Evaluation Documents & Architecture
+- **[Architecture Diagram PDF](docs/architecture-diagram.pdf)** (Comprehensive multi-organ in-silico workflow diagram)
+- **[Project Presentation PDF](docs/project-presentation.pdf)** (Project presentation deck, clinical outcomes, and metrics)
 
 ---
 
-## 4. Technology Stack
-
+## 5. Technology Stack & AI Framework Details
 - **Frontend**: React.js, Tailwind CSS, React Router, Lucide React, Recharts, Motion
 - **Backend**: Node.js Express (`server.ts` + `server/routes.ts`)
 - **Database**: SQLite powered by WebAssembly `sql.js` with disk persistence (`data/vitatwin.sqlite`)
-- **AI & Kinetics**: Predictive simulation engine with mathematical compartmental fallback
+- **AI/ML Model & Framework**: Hybrid predictive simulation engine combining Google Gemini structured LLM reasoning with mathematical compartmental modeling (Bergman Minimal Model fallback).
 - **Auth**: JWT Authentication (`jsonwebtoken`) & `bcryptjs` password hashing
 
 ---
 
-## 5. Repository Structure & Documentation
+## 6. Repository Structure
 
 ```text
 mahajanharshada2006_SSBT_COET/
