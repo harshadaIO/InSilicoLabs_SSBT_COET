@@ -5,7 +5,7 @@
 ---
 
 ## Team & Submission Details
-* **Team Name:** InSilico Labs
+* **Team Name:** mahajanharshada2006
 * **College / Incubator:** SSBT's College of Engineering and Technology Jalgaon
 * **Team Leader Name:** Harshada Ravindra Mahajan
 * **Contact Number:** 8010459735
@@ -72,7 +72,7 @@
 ## 5. Repository Structure & Documentation
 
 ```text
-InSilicoLabs_SSBT_COET/
+mahajanharshada2006_SSBT_COET/
 ├── server/                 # Express backend, Gemini AI integration, and clinical titration logic
 ├── client/                 # React frontend, patient/clinician portals, and simulation charts
 ├── docs/                   # Supporting evaluation documentation
