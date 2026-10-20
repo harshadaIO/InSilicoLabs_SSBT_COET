@@ -14,8 +14,8 @@
 * **Live Application:** https://vitatwin.onrender.com
 * **Open-Source License:** Distributed under the **MIT License**
 * **Evaluation Documents:
-- **[Architecture Diagram PDF](docs/architecture-diagram.pdf)**
-- **[Project Presentation PDF](docs/project-presentation.pdf)**
+* **[Architecture Diagram PDF](docs/architecture-diagram.pdf)**
+* **[Project Presentation PDF](docs/project-presentation.pdf)**
 
 ---
 
