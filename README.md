@@ -12,7 +12,10 @@
 * **Email ID:** mahajanharshada2006@gmail.com
 * **Public GitHub Repository:** https://github.com/harshadaIO/InSilicoLabs_SSBT_COET.git
 * **Live Application:** https://vitatwin.onrender.com
-* **Open-Source License:** Distributed under the **MIT License**.
+* **Open-Source License:** Distributed under the **MIT License**
+* **Evaluation Documents:
+- **[Architecture Diagram PDF](docs/architecture-diagram.pdf)**
+- **[Project Presentation PDF](docs/project-presentation.pdf)**
 
 ---
 
